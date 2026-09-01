@@ -8,77 +8,116 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%235a9dff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233f6fff%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2224%22%20fill%3D%22url%28%23g%29%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%2222%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23ffffff%22/%3E%3Crect%20x%3D%2254%22%20y%3D%2224%22%20width%3D%2222%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.85%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2254%22%20width%3D%2222%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.85%22/%3E%3Crect%20x%3D%2254%22%20y%3D%2254%22%20width%3D%2222%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23ffffff%22/%3E%3C/svg%3E">
 <meta name="theme-color" content="#3f6fff">
 <style>
+  :root{
+    --bg:#eef1f6; --panel:#ffffff; --panel-2:#f7f8fb; --border:#e6e9f0;
+    --text:#2b3040; --muted:#8b91a1; --faint:#aab0be;
+    --accent:#4f7cff; --accent-hover:#3f6cf0; --accent-soft:#edf1ff;
+    --ghost:#f1f3f8; --ghost-hover:#e7eaf2;
+    --shadow:0 1px 2px rgba(20,30,60,.04),0 6px 20px rgba(20,30,60,.06);
+    --shadow-lg:0 12px 40px rgba(20,30,60,.18);
+    --r:12px; --r-sm:9px;
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:#1e2128; color:#e8eaed; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
-  header { padding:10px 16px; background:linear-gradient(90deg,#181b22,#15171c); display:flex; align-items:center; gap:11px; border-bottom:1px solid #2c2f38; }
-  header .logo { width:26px; height:26px; border-radius:7px; background:linear-gradient(135deg,#5a9dff,#3f6fff); display:grid; grid-template-columns:1fr 1fr; gap:2.5px; padding:5px; flex-shrink:0; box-shadow:0 2px 8px rgba(63,111,255,.4); }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; -webkit-font-smoothing:antialiased; }
+  header { padding:12px 20px; background:var(--panel); display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); z-index:10; }
+  header .logo { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#6aa0ff,#4f7cff); display:grid; grid-template-columns:1fr 1fr; gap:2.5px; padding:5px; flex-shrink:0; box-shadow:0 3px 10px rgba(79,124,255,.35); }
   header .logo i { background:#fff; border-radius:1.5px; }
   header .logo i:nth-child(2),header .logo i:nth-child(3){ opacity:.85; }
-  header h1 { font-size:16px; font-weight:600; letter-spacing:.3px; }
-  header .hint { font-size:12px; color:#8a8f9c; }
-  #sizeLabel { margin-left:auto; color:#5f96ff; font-size:12px; }
-  .langsw { display:flex; background:#1a1c22; border-radius:7px; padding:2px; gap:2px; }
-  .langsw button { border:none; background:transparent; color:#9aa0ac; padding:4px 10px; border-radius:5px; cursor:pointer; font-size:12px; }
-  .langsw button.active { background:#4f8cff; color:#fff; }
+  header h1 { font-size:17px; font-weight:700; letter-spacing:.2px; color:var(--text); }
+  header .hint { font-size:12px; color:var(--muted); }
+  #sizeLabel { margin-left:auto; color:var(--accent); font-size:12px; font-weight:600; background:var(--accent-soft); padding:4px 10px; border-radius:20px; }
+  .langsw { display:flex; background:var(--ghost); border-radius:20px; padding:3px; gap:2px; }
+  .langsw button { border:none; background:transparent; color:var(--muted); padding:5px 12px; border-radius:16px; cursor:pointer; font-size:12px; font-weight:600; transition:.15s; }
+  .langsw button.active { background:var(--accent); color:#fff; box-shadow:0 2px 6px rgba(79,124,255,.35); }
   .main { flex:1; display:flex; min-height:0; }
-  .sidebar { width:250px; background:#22252d; border-right:1px solid #2c2f38; padding:14px; overflow-y:auto; flex-shrink:0; }
-  .stage { flex:1; display:flex; align-items:center; justify-content:center; padding:20px; min-width:0; overflow:hidden; background:#1e2128; }
+  .sidebar { width:264px; background:var(--panel); border-right:1px solid var(--border); padding:18px; overflow-y:auto; flex-shrink:0; }
+  .stage { flex:1; display:flex; align-items:center; justify-content:center; padding:28px; min-width:0; overflow:hidden; background:var(--bg); }
   #canvasWrap { position:relative; }
-  #canvas { display:block; box-shadow:0 4px 24px rgba(0,0,0,.5); background:#fff; touch-action:none; }
-  .rz { position:absolute; background:#4f8cff; border:2px solid #fff; border-radius:5px; z-index:5; }
+  #canvas { display:block; box-shadow:var(--shadow-lg); background:#fff; touch-action:none; border-radius:4px; }
+  #canvas.alpha { background-color:#fff; background-image:linear-gradient(45deg,#dde1ea 25%,transparent 25%),linear-gradient(-45deg,#dde1ea 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#dde1ea 75%),linear-gradient(-45deg,transparent 75%,#dde1ea 75%); background-size:20px 20px; background-position:0 0,0 10px,10px -10px,-10px 0px; }
+  .rz { position:absolute; background:var(--accent); border:2px solid #fff; border-radius:5px; z-index:5; box-shadow:0 1px 4px rgba(20,30,60,.25); }
   .rz[data-dir="r"]  { right:-7px; top:50%; width:11px; height:36px; margin-top:-18px; cursor:ew-resize; }
   .rz[data-dir="b"]  { bottom:-7px; left:50%; width:36px; height:11px; margin-left:-18px; cursor:ns-resize; }
   .rz[data-dir="rb"] { right:-8px; bottom:-8px; width:16px; height:16px; cursor:nwse-resize; }
   #canvasWrap.noresize .rz { display:none; }
-  .tray { background:#15171c; border-top:1px solid #2c2f38; padding:10px 14px; display:flex; gap:10px; align-items:center; overflow-x:auto; min-height:86px; flex-shrink:0; }
-  .tray .thumb { position:relative; width:60px; height:60px; border-radius:8px; overflow:hidden; flex-shrink:0; cursor:grab; border:2px solid transparent; }
+  .tray { background:var(--panel); border-top:1px solid var(--border); padding:12px 18px; display:flex; gap:10px; align-items:center; overflow-x:auto; min-height:88px; flex-shrink:0; }
+  .tray .thumb { position:relative; width:62px; height:62px; border-radius:10px; overflow:hidden; flex-shrink:0; cursor:grab; border:2px solid transparent; box-shadow:var(--shadow); }
   .tray .thumb img { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
-  .tray .thumb .del { position:absolute; top:2px; right:2px; width:18px; height:18px; background:rgba(0,0,0,.65); color:#fff; border-radius:50%; font-size:12px; line-height:18px; text-align:center; cursor:pointer; }
-  .tray .thumb.dragover { border-color:#4f8cff; }
-  .tray .empty-tip { color:#6b707d; font-size:13px; }
-  .sec { margin-bottom:18px; }
-  .sec h3 { font-size:12px; color:#8a8f9c; margin-bottom:8px; font-weight:600; letter-spacing:.5px; }
-  .tabs { display:flex; background:#1a1c22; border-radius:8px; padding:3px; gap:3px; }
-  .tabs button { flex:1; border:none; background:transparent; color:#9aa0ac; padding:7px 0; border-radius:6px; cursor:pointer; font-size:13px; }
-  .tabs button.active { background:#4f8cff; color:#fff; }
-  .tpls { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
-  .tpl { position:relative; aspect-ratio:1; background:#1a1c22; border:1.5px solid #33363f; border-radius:6px; cursor:pointer; }
-  .tpl.active { border-color:#4f8cff; }
+  .tray .thumb .del { position:absolute; top:3px; right:3px; width:18px; height:18px; background:rgba(0,0,0,.6); color:#fff; border-radius:50%; font-size:12px; line-height:18px; text-align:center; cursor:pointer; }
+  .tray .thumb.dragover { border-color:var(--accent); }
+  .tray .empty-tip { color:var(--muted); font-size:13px; }
+  .sec { margin-bottom:22px; }
+  .sec h3 { font-size:11px; color:var(--muted); margin-bottom:10px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; }
+  .tabs { display:flex; background:var(--ghost); border-radius:10px; padding:3px; gap:3px; }
+  .tabs button { flex:1; border:none; background:transparent; color:var(--muted); padding:8px 0; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; transition:.15s; }
+  .tabs button.active { background:var(--panel); color:var(--accent); box-shadow:var(--shadow); }
+  .tpls { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+  .tpl { position:relative; aspect-ratio:1; background:var(--panel-2); border:1.5px solid var(--border); border-radius:8px; cursor:pointer; transition:.15s; }
+  .tpl:hover { border-color:var(--faint); }
+  .tpl.active { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); }
   .tpl .grid { position:absolute; inset:3px; }
-  .tpl i { position:absolute; background:#5a6070; border-radius:1.5px; }
-  .tpl.active i { background:#4f8cff; }
-  .tpl .pc { fill:#5a6070; }
-  .tpl.active .pc { fill:#4f8cff; }
-  label.row { display:flex; align-items:center; justify-content:space-between; font-size:13px; color:#c6cad3; margin-bottom:10px; gap:8px; }
-  input[type=range] { flex:1; accent-color:#4f8cff; }
-  input[type=color] { width:36px; height:24px; border:none; background:none; cursor:pointer; padding:0; }
-  select { background:#1a1c22; color:#e8eaed; border:1px solid #33363f; border-radius:6px; padding:5px 8px; font-size:13px; }
-  .btn { display:block; width:100%; padding:9px 0; border:none; border-radius:8px; cursor:pointer; font-size:14px; margin-bottom:8px; }
-  .btn.primary { background:#4f8cff; color:#fff; font-weight:600; }
-  .btn.ghost { background:#2c2f38; color:#c6cad3; }
-  .btn:hover { filter:brightness(1.1); }
-  .btnrow { display:flex; gap:6px; }
-  .btnrow .btn { flex:1; font-size:13px; padding:7px 0; }
-  .val { color:#8a8f9c; font-size:12px; min-width:28px; text-align:right; }
-  .tip { font-size:12px; color:#6b707d; line-height:1.6; }
-  #uploadBtn { background:#2ea36b; color:#fff; font-weight:600; }
+  .tpl i { position:absolute; background:#c2c8d4; border-radius:1.5px; }
+  .tpl.active i { background:var(--accent); }
+  .tpl .pc { fill:#c2c8d4; }
+  .tpl.active .pc { fill:var(--accent); }
+  label.row { display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--text); margin-bottom:12px; gap:8px; }
+  input[type=range] { flex:1; accent-color:var(--accent); height:4px; }
+  input[type=color] { width:38px; height:26px; border:1px solid var(--border); border-radius:7px; background:none; cursor:pointer; padding:2px; }
+  select { background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer; transition:.15s; }
+  select:hover { border-color:var(--faint); }
+  select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .btn { display:block; width:100%; padding:10px 0; border:none; border-radius:var(--r-sm); cursor:pointer; font-size:14px; font-weight:600; margin-bottom:9px; transition:.15s; }
+  .btn.primary { background:var(--accent); color:#fff; box-shadow:0 3px 10px rgba(79,124,255,.28); }
+  .btn.primary:hover { background:var(--accent-hover); }
+  .btn.ghost { background:var(--ghost); color:#4a5163; }
+  .btn.ghost:hover { background:var(--ghost-hover); }
+  .btnrow { display:flex; gap:7px; }
+  .btnrow .btn { flex:1; font-size:13px; padding:8px 0; }
+  .val { color:var(--muted); font-size:12px; min-width:30px; text-align:right; font-variant-numeric:tabular-nums; }
+  .tip { font-size:12px; color:var(--faint); line-height:1.65; }
+  #uploadBtn { background:var(--accent); color:#fff; font-weight:700; padding:12px 0; font-size:14px; box-shadow:0 3px 10px rgba(79,124,255,.28); }
+  #uploadBtn:hover { background:var(--accent-hover); }
   .hidden { display:none !important; }
-  #dropOverlay { position:fixed; inset:0; background:rgba(79,140,255,.15); border:3px dashed #4f8cff; z-index:99; display:none; align-items:center; justify-content:center; pointer-events:none; }
-  #dropOverlay span { background:#4f8cff; color:#fff; padding:14px 28px; border-radius:12px; font-size:16px; font-weight:600; }
+  #dropOverlay { position:fixed; inset:0; background:rgba(79,124,255,.1); border:3px dashed var(--accent); z-index:99; display:none; align-items:center; justify-content:center; pointer-events:none; }
+  #dropOverlay span { background:var(--accent); color:#fff; padding:14px 30px; border-radius:14px; font-size:16px; font-weight:600; box-shadow:var(--shadow-lg); }
   body.dropping #dropOverlay { display:flex; }
-  #pop { position:fixed; z-index:120; background:#2a2d36; border:1px solid #3a3e49; border-radius:10px; padding:6px; display:none; gap:5px; box-shadow:0 6px 20px rgba(0,0,0,.45); }
-  #pop button { border:none; background:#353946; color:#e8eaed; padding:8px 13px; border-radius:7px; cursor:pointer; font-size:13px; white-space:nowrap; }
-  #pop button:hover { background:#4f8cff; }
-  #cropModal { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:200; display:none; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+  #pop { position:fixed; z-index:120; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:6px; display:none; gap:4px; box-shadow:var(--shadow-lg); }
+  #pop button { border:none; background:transparent; color:var(--text); padding:9px 14px; border-radius:8px; cursor:pointer; font-size:13px; white-space:nowrap; font-weight:500; transition:.12s; }
+  #pop button:hover { background:var(--accent-soft); color:var(--accent); }
+  #cropModal { position:fixed; inset:0; background:rgba(25,30,45,.6); backdrop-filter:blur(3px); z-index:200; display:none; align-items:center; justify-content:center; flex-direction:column; gap:18px; }
   #cropModal.show { display:flex; }
-  #cropCanvas { background:#0c0d10; border-radius:10px; touch-action:none; box-shadow:0 8px 40px rgba(0,0,0,.6); }
-  #cropModal .tip2 { color:#aab0bc; font-size:13px; }
+  #cropCanvas { background:#0c0d10; border-radius:12px; touch-action:none; box-shadow:var(--shadow-lg); }
+  #cropModal .tip2 { color:#eef1f6; font-size:13px; }
   .cropBtns { display:flex; gap:12px; }
-  .cropBtns button { padding:10px 26px; border:none; border-radius:9px; cursor:pointer; font-size:14px; }
-  #cropOk { background:#4f8cff; color:#fff; font-weight:600; }
-  #cropReset { background:#3a3e49; color:#e8eaed; }
-  #cropCancel { background:#3a3e49; color:#e8eaed; }
-  .cropBtns button:hover { filter:brightness(1.15); }
+  .cropBtns button { padding:11px 28px; border:none; border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; transition:.15s; }
+  #cropOk { background:var(--accent); color:#fff; }
+  #cropOk:hover { background:var(--accent-hover); }
+  #cropReset,#cropCancel { background:#ffffff; color:var(--text); }
+  #cropReset:hover,#cropCancel:hover { background:var(--ghost); }
+  .library { width:196px; background:var(--panel); border-left:1px solid var(--border); padding:18px; overflow-y:auto; flex-shrink:0; }
+  .library h3 { font-size:11px; color:var(--muted); margin-bottom:12px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; }
+  .libgrid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .libthumb { position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; cursor:grab; border:2px solid transparent; background:var(--panel-2); box-shadow:var(--shadow); transition:.15s; }
+  .libthumb:hover { border-color:var(--accent); }
+  .libthumb img { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+  .libthumb .del { position:absolute; top:3px; right:3px; width:18px; height:18px; background:rgba(0,0,0,.6); color:#fff; border-radius:50%; font-size:12px; line-height:18px; text-align:center; cursor:pointer; }
+  .libempty { color:var(--faint); font-size:12px; line-height:1.7; }
+  input[type=text].capt { width:100%; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13px; margin-bottom:8px; transition:.15s; }
+  input[type=text].capt:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  input[type=checkbox] { accent-color:var(--accent); }
+  #secFreeTpl .tpls { grid-template-columns:repeat(4,1fr); }
+  .export-card { background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r); padding:12px; margin-bottom:10px; }
+  .exp-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:11px; }
+  .exp-field { display:flex; flex-direction:column; gap:5px; font-size:11px; color:var(--muted); font-weight:600; letter-spacing:.3px; }
+  .exp-field select { width:100%; }
+  .export-card .btn { margin-bottom:8px; }
+  .export-card .btn:last-child { margin-bottom:0; }
+  .btn.danger { color:#e5484d; }
+  .btn.danger:hover { background:#fdecec; }
+  .subh { font-size:12px; color:var(--text); font-weight:600; margin-bottom:8px; }
+  ::-webkit-scrollbar { width:9px; height:9px; }
+  ::-webkit-scrollbar-thumb { background:#d2d7e0; border-radius:5px; border:2px solid var(--panel); }
+  ::-webkit-scrollbar-thumb:hover { background:#bcc3d0; }
 </style>
 </head>
 <body>
@@ -119,6 +158,12 @@
         <option value="16:9" data-i18n="ar169">16 : 9 宽屏</option>
         <option value="9:16" data-i18n="ar916">9 : 16 手机屏</option>
       </select>
+      <button class="btn ghost" id="fitOrigBtn" style="margin-top:8px" data-i18n="fitOriginal">📐 适配原图尺寸</button>
+    </div>
+    <div class="sec hidden" id="secFreeTpl">
+      <h3 data-i18n="freeTplTitle">添加模版组（可整体缩放）</h3>
+      <div class="tpls" id="freeTplList"></div>
+      <p class="tip" data-i18n="freeTplTip">点击一个模版把它作为一组加到画布，之后可整体拖动/缩放，从右侧图片库拖图进格子</p>
     </div>
     <div class="sec hidden" id="secPages">
       <h3 data-i18n="pagesTitle">画布页（左右拼接）</h3>
@@ -141,19 +186,28 @@
       <h3 data-i18n="styleTitle">样式调节</h3>
       <label class="row"><span data-i18n="gap">间距</span> <input type="range" id="gapSlider" min="0" max="60" value="12"><span class="val" id="gapVal">12</span></label>
       <label class="row"><span data-i18n="radius">圆角</span> <input type="range" id="radSlider" min="0" max="60" value="8"><span class="val" id="radVal">8</span></label>
-      <label class="row"><span data-i18n="bgColor">背景色</span> <input type="color" id="bgPicker" value="#ffffff"></label>
-      <div class="btnrow">
-        <button class="btn ghost" id="bgImgBtn" data-i18n="bgImgBtn">🖼 背景图片</button>
-        <button class="btn ghost" id="bgImgClear" style="flex:0 0 40%" data-i18n="clear">清除</button>
+      <div class="subh" data-i18n="bgLabel">背景</div>
+      <div class="tabs" id="bgTypeTabs">
+        <button data-bgtype="color" class="active" data-i18n="bgColorTab">纯色</button>
+        <button data-bgtype="transparent" data-i18n="bgTransTab">透明</button>
+        <button data-bgtype="image" data-i18n="bgImgTab">图片</button>
       </div>
-      <label class="row" id="bgFitRow" style="display:none"><span data-i18n="bgFit">填充</span>
-        <select id="bgFitSel"><option value="cover" data-i18n="fitCover">铺满裁切</option><option value="contain" data-i18n="fitContain">完整显示</option><option value="stretch" data-i18n="fitStretch">拉伸变形</option></select>
-      </label>
+      <label class="row" id="bgColorRow" style="margin-top:10px"><span data-i18n="bgColor">背景色</span> <input type="color" id="bgPicker" value="#ffffff"></label>
+      <div id="bgImageRow" style="display:none;margin-top:10px">
+        <div class="btnrow">
+          <button class="btn ghost" id="bgImgBtn" data-i18n="bgImgBtn">🖼 选择图片</button>
+          <button class="btn ghost" id="bgImgClear" style="flex:0 0 40%" data-i18n="clear">清除</button>
+        </div>
+        <label class="row" id="bgFitRow"><span data-i18n="bgFit">填充</span>
+          <select id="bgFitSel"><option value="cover" data-i18n="fitCover">铺满裁切</option><option value="contain" data-i18n="fitContain">完整显示</option><option value="stretch" data-i18n="fitStretch">拉伸变形</option></select>
+        </label>
+      </div>
       <input type="file" id="bgImgInput" accept="image/*" class="hidden">
     </div>
     <div class="sec hidden" id="secCell">
       <h3 data-i18n="cellTitle">选中格子</h3>
       <label class="row"><span data-i18n="zoom">缩放</span> <input type="range" id="zoomSlider" min="100" max="300" value="100"><span class="val" id="zoomVal">1.0</span></label>
+      <input type="text" class="capt" id="captInput" data-i18n-ph="captPh" placeholder="格子标题（可留空）">
       <p class="tip" data-i18n="cellTip">拖动格内照片调整位置，滚轮或滑块缩放，单击弹出裁剪菜单，双击清空</p>
     </div>
     <div class="sec hidden" id="secFree">
@@ -168,14 +222,19 @@
     </div>
     <div class="sec">
       <h3 data-i18n="exportTitle">导出</h3>
-      <label class="row"><span data-i18n="fmt">格式</span>
-        <select id="fmtSel"><option value="png">PNG</option><option value="jpg">JPG</option></select>
-      </label>
-      <label class="row"><span data-i18n="size">尺寸</span>
-        <select id="sizeSel"><option value="1200" data-i18n="sizeStd">标准 1200px</option><option value="2400" selected data-i18n="sizeHd">高清 2400px</option><option value="4000" data-i18n="sizeUhd">超清 4000px</option></select>
-      </label>
-      <button class="btn primary" id="exportBtn" data-i18n="exportBtn">⬇ 导出拼图</button>
-      <button class="btn ghost" id="clearBtn" data-i18n="clearAll">清空全部</button>
+      <div class="export-card">
+        <div class="exp-grid">
+          <label class="exp-field"><span data-i18n="fmt">格式</span>
+            <select id="fmtSel"><option value="png">PNG</option><option value="jpg">JPG</option></select>
+          </label>
+          <label class="exp-field"><span data-i18n="size">尺寸</span>
+            <select id="sizeSel"><option value="1200" data-i18n="sizeStd">标准 1200px</option><option value="2400" selected data-i18n="sizeHd">高清 2400px</option><option value="4000" data-i18n="sizeUhd">超清 4000px</option></select>
+          </label>
+        </div>
+        <button class="btn primary" id="exportBtn" data-i18n="exportBtn">⬇ 导出拼图</button>
+        <button class="btn ghost" id="saveLibBtn" data-i18n="saveLib">＋ 存入图片库</button>
+      </div>
+      <button class="btn ghost danger" id="clearBtn" data-i18n="clearAll">清空全部</button>
     </div>
   </div>
   <div class="stage">
@@ -185,6 +244,10 @@
       <div class="rz" data-dir="b"></div>
       <div class="rz" data-dir="rb"></div>
     </div>
+  </div>
+  <div class="library">
+    <h3 data-i18n="libTitle">图片库（可拖入画布）</h3>
+    <div class="libgrid" id="libGrid"></div>
   </div>
 </div>
 <div class="tray" id="tray"></div>
@@ -213,7 +276,7 @@ let stripOrder = [];        // photo ids
 let stripCrops = {};        // {photoId: {sx,sy,sw,sh}}
 let stripDir = 'v';
 let gap = 12, radius = 8, bg = '#ffffff', aspect = '1:1';
-let bgImg = null, bgImgUrl = null, bgFit = 'cover';
+let bgImg = null, bgImgUrl = null, bgFit = 'cover', bgTransparent = false, bgType = 'color';
 let customSize = null;      // [w,h] 自由拉伸后的画布(页)尺寸
 let pages = 1;              // 自由模式画布页数
 let selCell = -1, selFree = -1, selStrip = -1;
@@ -225,9 +288,12 @@ const I18N = {
     appName:'拼图工具', import:'＋ 导入照片', mode:'模式', modeTemplate:'模板', modeFree:'自由', modeStrip:'长图',
     chooseTpl:'选择模板', aspectTitle:'画布比例（可拖画布边角自由拉伸）',
     ar11:'1 : 1 正方形', ar43:'4 : 3 横向', ar34:'3 : 4 竖向', ar169:'16 : 9 宽屏', ar916:'9 : 16 手机屏',
+    fitOriginal:'📐 适配原图尺寸',
     pagesTitle:'画布页（左右拼接）', pageL:'＋左加页', pageR:'＋右加页', pageDel:'－减页',
     stripDirTitle:'拼接方向', dirV:'↓ 竖向', dirH:'→ 横向', stripTip:'点击画布上的图块可前移 / 后移 / 移除',
-    styleTitle:'样式调节', gap:'间距', radius:'圆角', bgColor:'背景色', bgImgBtn:'🖼 背景图片', clear:'清除',
+    styleTitle:'样式调节', gap:'间距', radius:'圆角', bgLabel:'背景', bgColorTab:'纯色', bgTransTab:'透明', bgImgTab:'图片',
+    bgColor:'背景色', bgNone:'透明背景 (PNG)', bgImgBtn:'🖼 选择图片', clear:'清除',
+    saveLib:'＋ 存入图片库',
     bgFit:'填充', fitCover:'铺满裁切', fitContain:'完整显示', fitStretch:'拉伸变形',
     cellTitle:'选中格子', zoom:'缩放', cellTip:'拖动格内照片调整位置，滚轮或滑块缩放，单击弹出裁剪菜单，双击清空',
     freeTitle:'选中图片', cropFreeBtn:'✂ 裁剪这张图', fwd:'上移层', back:'下移层', del:'删除',
@@ -235,21 +301,28 @@ const I18N = {
     exportTitle:'导出', fmt:'格式', size:'尺寸', sizeStd:'标准 1200px', sizeHd:'高清 2400px', sizeUhd:'超清 4000px',
     exportBtn:'⬇ 导出拼图', clearAll:'清空全部', dropTip:'📥 松开即可导入照片',
     cropTip2:'拖动裁剪框移动位置，拖四角调整大小', cancel:'取消', cropReset:'重置为全图', cropOk:'✔ 应用裁剪',
-    hintTemplate:'拖照片进格子 · 格内拖动调位置 · 拖到别的格子换位 · 单击弹出裁剪菜单',
-    hintFree:'点击底部照片添加 · 拖动/缩放/旋转 · 单击图片可裁剪 · 左右可加画布页',
+    hintTemplate:'从右侧图片库拖图进格子 · 拖到别的格子换位 · 选中格子可加文字标题 · 单击弹出裁剪菜单',
+    hintFree:'点模版加一组 · 右下角/右边/下边手柄可拉伸(改宽高) · 选中组后点图片库填图 · 也可拖图到空白当独立图片',
     hintStrip:'点击图块可裁剪/前移/后移/移除 · 拖动底部缩略图排序',
     pageInfo:n=>`当前 ${n} 页，导出时拼成一张长图`, sizeLabel:(w,h)=>`画布 ${w} × ${h} px`,
     trayTip:'点击左上角「导入照片」，或直接把图片拖进页面',
     alertNoPhoto:'请先导入照片', confirmClear:'确定清空所有照片和布局？',
     popCrop:'✂ 裁剪', popRemove:'🗑 移除', popDelete:'🗑 删除', popUp:'⬆ 前移', popDown:'⬇ 后移',
+    libTitle:'图片库（可拖入画布）', libEmpty:'还没有图片，点左上角「导入照片」或把图片拖进来',
+    captPh:'格子标题（可留空）', freeTplTitle:'添加模版组（可整体缩放）',
+    freeTplTip:'点击一个模版把它作为一组加到画布，之后可整体拖动/缩放，从右侧图片库拖图进格子',
+    popCellClear:'🗑 清空此格', popDelGroup:'🗑 删除整组',
   },
   en: {
     appName:'Collage', import:'＋ Import Photos', mode:'Mode', modeTemplate:'Grid', modeFree:'Free', modeStrip:'Stitch',
     chooseTpl:'Choose Layout', aspectTitle:'Canvas Ratio (drag corners to resize)',
     ar11:'1 : 1 Square', ar43:'4 : 3 Landscape', ar34:'3 : 4 Portrait', ar169:'16 : 9 Wide', ar916:'9 : 16 Phone',
+    fitOriginal:'📐 Fit to Original Size',
     pagesTitle:'Canvas Pages (join L–R)', pageL:'＋ Add Left', pageR:'＋ Add Right', pageDel:'－ Remove',
     stripDirTitle:'Stitch Direction', dirV:'↓ Vertical', dirH:'→ Horizontal', stripTip:'Click a tile to move up / down / remove',
-    styleTitle:'Style', gap:'Gap', radius:'Corners', bgColor:'Background', bgImgBtn:'🖼 BG Image', clear:'Clear',
+    styleTitle:'Style', gap:'Gap', radius:'Corners', bgLabel:'Background', bgColorTab:'Color', bgTransTab:'None', bgImgTab:'Image',
+    bgColor:'Background', bgNone:'Transparent (PNG)', bgImgBtn:'🖼 Choose Image', clear:'Clear',
+    saveLib:'＋ Save to Library',
     bgFit:'Fit', fitCover:'Cover', fitContain:'Contain', fitStretch:'Stretch',
     cellTitle:'Selected Cell', zoom:'Zoom', cellTip:'Drag to reposition, scroll/slider to zoom, click for crop menu, double-click to clear',
     freeTitle:'Selected Image', cropFreeBtn:'✂ Crop This Image', fwd:'Forward', back:'Backward', del:'Delete',
@@ -257,13 +330,17 @@ const I18N = {
     exportTitle:'Export', fmt:'Format', size:'Size', sizeStd:'Standard 1200px', sizeHd:'HD 2400px', sizeUhd:'Ultra 4000px',
     exportBtn:'⬇ Export', clearAll:'Clear All', dropTip:'📥 Drop to import photos',
     cropTip2:'Drag the box to move, drag corners to resize', cancel:'Cancel', cropReset:'Reset to Full', cropOk:'✔ Apply Crop',
-    hintTemplate:'Drag photos into cells · drag inside to reposition · drag to another cell to swap · click for crop menu',
-    hintFree:'Click a photo below to add · drag/scale/rotate · click to crop · add pages left/right',
+    hintTemplate:'Drag photos from the library into cells · drag to another cell to swap · add a caption to a selected cell · click for crop menu',
+    hintFree:'Click a layout to add a group · corner/right/bottom handles stretch it · select it then click library photos to fill · or drop onto empty space as standalone images',
     hintStrip:'Click a tile to crop/move/remove · drag thumbnails below to reorder',
     pageInfo:n=>`${n} page${n>1?'s':''}, exported as one long image`, sizeLabel:(w,h)=>`Canvas ${w} × ${h} px`,
     trayTip:'Click "Import Photos" at top-left, or drag images onto the page',
     alertNoPhoto:'Please import photos first', confirmClear:'Clear all photos and layout?',
     popCrop:'✂ Crop', popRemove:'🗑 Remove', popDelete:'🗑 Delete', popUp:'⬆ Forward', popDown:'⬇ Backward',
+    libTitle:'Photos (drag to canvas)', libEmpty:'No photos yet — click "Import Photos" or drag images in',
+    captPh:'Cell caption (optional)', freeTplTitle:'Add Layout Group (scales as one)',
+    freeTplTip:'Click a layout to add it as one group; drag/scale it as a whole, and drag photos from the library into its cells',
+    popCellClear:'🗑 Clear Cell', popDelGroup:'🗑 Delete Group',
   },
 };
 function t(k) { const v = I18N[lang][k]; return v !== undefined ? v : I18N.zh[k]; }
@@ -271,6 +348,7 @@ function applyLang() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   document.title = t('appName');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.querySelectorAll('#langSw button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   renderTray(); updateSidebar(); render();
 }
@@ -334,12 +412,12 @@ function canvasSize() {
   if (stripDir === 'v') {
     const W = 1000, cw = W - 2*gap;
     let H = gap;
-    list.forEach(p => { H += cw * p.img.height / p.img.width + gap; });
+    list.forEach(p => { const s = stripSrc(p); H += cw * s.sh / s.sw + gap; });
     return [W, Math.max(H, 200)];
   } else {
     const H = 1000, ch = H - 2*gap;
     let W = gap;
-    list.forEach(p => { W += ch * p.img.width / p.img.height + gap; });
+    list.forEach(p => { const s = stripSrc(p); W += ch * s.sw / s.sh + gap; });
     return [Math.max(W, 200), H];
   }
 }
@@ -356,16 +434,16 @@ function roundRectPath(c, x, y, w, h, r) {
   c.arcTo(x, y, x+w, y, r);
   c.closePath();
 }
-// 计算每个格子的绘制形状：{rect:bool, bbox:[x,y,w,h], poly:[[x,y],...]}
-function cellShapes(W, H) {
-  const g = gap, ax = g/2, ay = g/2, aw = W-g, ah = H-g;
-  return TEMPLATES[tplIndex].map(f => {
+// 计算指定模版在矩形框 [X,Y,W,H] 内每个格子的形状：{rect, bbox:[x,y,w,h], poly}
+function templateShapes(tpl, X, Y, W, H, g) {
+  const ax = X + g/2, ay = Y + g/2, aw = W-g, ah = H-g;
+  return TEMPLATES[tpl].map(f => {
     if (!isPolyCell(f)) {
       const x = ax + f[0]*aw + g/2, y = ay + f[1]*ah + g/2, w = f[2]*aw - g, h = f[3]*ah - g;
       return { rect:true, bbox:[x,y,w,h], poly:[[x,y],[x+w,y],[x+w,y+h],[x,y+h]] };
     }
-    // 多边形：按画布尺寸映射，再以包围盒中心统一内缩产生间距
-    const pts = f.map(([ux,uy]) => [ux*W, uy*H]);
+    // 多边形：映射到框内，再以包围盒中心统一内缩产生间距
+    const pts = f.map(([ux,uy]) => [X + ux*W, Y + uy*H]);
     let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
     pts.forEach(p => { minx=Math.min(minx,p[0]); miny=Math.min(miny,p[1]); maxx=Math.max(maxx,p[0]); maxy=Math.max(maxy,p[1]); });
     const cx=(minx+maxx)/2, cy=(miny+maxy)/2, bw=maxx-minx, bh=maxy-miny;
@@ -376,13 +454,49 @@ function cellShapes(W, H) {
     return { rect:false, bbox:[nx,ny,mx2-nx,my2-ny], poly };
   });
 }
-// 兼容旧调用：返回包围盒（用于命中测试等），并保留形状信息
+// 计算当前模版每个格子的绘制形状
+function cellShapes(W, H) { return templateShapes(tplIndex, 0, 0, W, H, gap); }
+// 兼容旧调用
 function cellRects(W, H) { return cellShapes(W, H); }
-function shapePath(c, shape) {
-  if (shape.rect) { roundRectPath(c, shape.bbox[0], shape.bbox[1], shape.bbox[2], shape.bbox[3], radius); return; }
+function shapePath(c, shape, r) {
+  if (r == null) r = radius;
+  if (shape.rect) { roundRectPath(c, shape.bbox[0], shape.bbox[1], shape.bbox[2], shape.bbox[3], r); return; }
   c.beginPath();
   shape.poly.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]));
   c.closePath();
+}
+// 封面式填充：把图片按 cover 填进形状并裁到形状内
+function drawCoverInShape(c, img, shape, r, crop) {
+  const [x,y,w,h] = shape.bbox;
+  const cr = crop || { sx:0, sy:0, sw:img.width, sh:img.height };
+  const s = Math.max(w/cr.sw, h/cr.sh);
+  const dw = cr.sw*s, dh = cr.sh*s;
+  c.save();
+  shapePath(c, shape, r);
+  c.clip();
+  c.drawImage(img, cr.sx, cr.sy, cr.sw, cr.sh, x+(w-dw)/2, y+(h-dh)/2, dw, dh);
+  c.restore();
+}
+// 在格子底部画标题栏文字
+function drawCaption(c, shape, text) {
+  if (!text) return;
+  const [x,y,w,h] = shape.bbox;
+  const barH = Math.max(22, Math.min(h*0.22, 60));
+  c.save();
+  shapePath(c, shape);
+  c.clip();
+  c.fillStyle = 'rgba(255,255,255,.92)';
+  c.fillRect(x, y+h-barH, w, barH);
+  c.fillStyle = '#222';
+  const fs = Math.min(barH*0.5, 30);
+  c.font = `600 ${fs}px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif`;
+  c.textAlign = 'left'; c.textBaseline = 'middle';
+  // 截断过长文字
+  let s = text; const maxW = w - 16;
+  while (s.length && c.measureText(s).width > maxW) s = s.slice(0, -1);
+  if (s !== text && s.length) s = s.slice(0, -1) + '…';
+  c.fillText(s, x+8, y+h-barH/2);
+  c.restore();
 }
 function pointInShape(shape, pt) {
   const [x,y,w,h] = shape.bbox;
@@ -416,6 +530,44 @@ function drawCellImage(c, img, shape, cell) {
   c.clip();
   c.drawImage(img, cr.sx, cr.sy, cr.sw, cr.sh, x+(w-dw)/2+cell.ox, y+(h-dh)/2+cell.oy, dw, dh);
   c.restore();
+}
+// 自由模式的模版组：返回组内每个格子在“本地坐标（组中心为原点）”下的形状
+function groupLocalShapes(it) {
+  const bw = it.w*it.scale, bh = it.h*it.scale;
+  const g = (it.gap != null ? it.gap : 16) * it.scale;
+  return templateShapes(it.tpl, -bw/2, -bh/2, bw, bh, g);
+}
+function drawGroup(c, it, showUI) {
+  c.save();
+  c.translate(it.x, it.y); c.rotate(it.rot);
+  const shapes = groupLocalShapes(it);
+  const gr = (it.rad != null ? it.rad : 8) * it.scale;
+  shapes.forEach((sh, k) => {
+    const sc = it.sub[k];
+    const ph = sc && sc.p != null ? photoById(sc.p) : null;
+    if (ph) {
+      drawCoverInShape(c, ph.img, sh, gr, sc.crop);
+      if (sc.text) drawCaption(c, sh, sc.text);
+    } else if (showUI) {
+      c.save();
+      shapePath(c, sh, gr);
+      c.fillStyle = '#f0f1f3'; c.fill();
+      c.setLineDash([6,5]); c.strokeStyle = '#c0c4cc'; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = '#a0a4ae'; c.font = '22px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      const bb = sh.bbox; c.fillText('＋', bb[0]+bb[2]/2, bb[1]+bb[3]/2);
+      c.restore();
+    } else if (bgType === 'color') {
+      // 导出时空格子填底色（透明/图片背景时留空以透出背景）
+      c.save(); shapePath(c, sh, gr); c.fillStyle = '#f0f1f3'; c.fill(); c.restore();
+    }
+  });
+  c.restore();
+}
+// 命中组内某个子格子：返回下标或 -1（pt 为画布坐标）
+function groupCellAt(it, pt) {
+  const lp = toLocal(pt, it);
+  const shapes = groupLocalShapes(it);
+  return shapes.findIndex(sh => pointInShape(sh, lp));
 }
 function stripSrc(p) {
   const cr = stripCrops[p.id];
@@ -454,9 +606,10 @@ function drawBgImage(c, W, H) {
   c.drawImage(bgImg, (W-dw)/2, (H-dh)/2, dw, dh);
 }
 function renderScene(c, W, H, showUI) {
-  c.fillStyle = bg;
-  c.fillRect(0, 0, W, H);
-  if (bgImg) drawBgImage(c, W, H);
+  c.clearRect(0, 0, W, H);
+  if (bgType === 'color') { c.fillStyle = bg; c.fillRect(0, 0, W, H); }
+  else if (bgType === 'image' && bgImg) drawBgImage(c, W, H);
+  // transparent: 不填充
   if (mode === 'template') {
     const shapes = cellShapes(W, H);
     shapes.forEach((sh, i) => {
@@ -466,6 +619,7 @@ function renderScene(c, W, H, showUI) {
       if (ph) {
         clampCell(cell, sh, ph.img);
         drawCellImage(c, ph.img, sh, cell);
+        if (cell.text) drawCaption(c, sh, cell.text);
       } else if (showUI) {
         c.save();
         shapePath(c, sh);
@@ -491,26 +645,34 @@ function renderScene(c, W, H, showUI) {
     });
   } else if (mode === 'free') {
     freeItems.forEach((it, i) => {
-      const ph = photoById(it.p);
-      if (!ph) return;
-      const w = it.w * it.scale, h = it.h * it.scale;
-      c.save();
-      c.translate(it.x, it.y);
-      c.rotate(it.rot);
-      roundRectPath(c, -w/2, -h/2, w, h, radius);
-      c.clip();
-      if (it.crop) c.drawImage(ph.img, it.crop.sx, it.crop.sy, it.crop.sw, it.crop.sh, -w/2, -h/2, w, h);
-      else c.drawImage(ph.img, -w/2, -h/2, w, h);
-      c.restore();
+      if (it.type === 'group') drawGroup(c, it, showUI);
+      else {
+        const ph = photoById(it.p);
+        if (!ph) return;
+        const w = it.w * it.scale, h = it.h * it.scale;
+        c.save();
+        c.translate(it.x, it.y);
+        c.rotate(it.rot);
+        roundRectPath(c, -w/2, -h/2, w, h, radius);
+        c.clip();
+        if (it.crop) c.drawImage(ph.img, it.crop.sx, it.crop.sy, it.crop.sw, it.crop.sh, -w/2, -h/2, w, h);
+        else c.drawImage(ph.img, -w/2, -h/2, w, h);
+        c.restore();
+      }
       if (showUI && i === selFree) {
+        const w = it.w * it.scale, h = it.h * it.scale;
         c.save();
         c.translate(it.x, it.y); c.rotate(it.rot);
         c.strokeStyle = '#4f8cff'; c.lineWidth = 3;
         c.strokeRect(-w/2, -h/2, w, h);
         c.fillStyle = '#4f8cff';
-        c.beginPath(); c.arc(w/2, h/2, 14, 0, 7); c.fill();
+        c.beginPath(); c.arc(w/2, h/2, 14, 0, 7); c.fill();       // 右下角
         c.beginPath(); c.moveTo(0, -h/2); c.lineTo(0, -h/2-40); c.stroke();
-        c.beginPath(); c.arc(0, -h/2-40, 14, 0, 7); c.fill();
+        c.beginPath(); c.arc(0, -h/2-40, 14, 0, 7); c.fill();     // 旋转
+        if (it.type === 'group') {
+          c.beginPath(); c.arc(w/2, 0, 12, 0, 7); c.fill();       // 右边：拉宽
+          c.beginPath(); c.arc(0, h/2, 12, 0, 7); c.fill();       // 下边：拉高
+        }
         c.restore();
       }
     });
@@ -549,18 +711,17 @@ function render() {
   if (canvas.height !== H) canvas.height = H;
   renderScene(ctx, W, H, true);
   fitCanvas();
+  canvas.classList.toggle('alpha', bgTransparent);
   document.getElementById('sizeLabel').textContent = t('sizeLabel')(W, H);
 }
 window.addEventListener('resize', render);
 
-// ---------- 模板列表 UI ----------
-const tplList = document.getElementById('tplList');
-TEMPLATES.forEach((t, i) => {
+// ---------- 模板缩略图（模板列表 + 自由模式模版组共用） ----------
+function makeTplThumb(tpl, i) {
   const d = document.createElement('div');
-  d.className = 'tpl' + (i === tplIndex ? ' active' : '');
-  if (isPolyTemplate(t)) {
-    // 异形模板：用 SVG 画多边形缩略图，绕包围盒中心内缩产生间距
-    const parts = t.map(f => {
+  d.className = 'tpl';
+  if (isPolyTemplate(tpl)) {
+    const parts = tpl.map(f => {
       const pts = f.map(([ux,uy]) => [ux*100, uy*100]);
       let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
       pts.forEach(p=>{minx=Math.min(minx,p[0]);miny=Math.min(miny,p[1]);maxx=Math.max(maxx,p[0]);maxy=Math.max(maxy,p[1]);});
@@ -573,25 +734,47 @@ TEMPLATES.forEach((t, i) => {
   } else {
     const g = document.createElement('div');
     g.className = 'grid';
-    t.forEach(f => {
+    tpl.forEach(f => {
       const b = document.createElement('i');
-      // 每个格子占实际比例，四周留 1px 统一间距
       b.style.cssText = `left:calc(${f[0]*100}% + 1px);top:calc(${f[1]*100}% + 1px);width:calc(${f[2]*100}% - 2px);height:calc(${f[3]*100}% - 2px)`;
       g.appendChild(b);
     });
     d.appendChild(g);
   }
+  return d;
+}
+// 模板模式的模板列表
+const tplList = document.getElementById('tplList');
+TEMPLATES.forEach((tpl, i) => {
+  const d = makeTplThumb(tpl, i);
+  if (i === tplIndex) d.classList.add('active');
   d.onclick = () => {
     tplIndex = i;
-    document.querySelectorAll('.tpl').forEach((e,j) => e.classList.toggle('active', j===i));
+    tplList.querySelectorAll('.tpl').forEach((e,j) => e.classList.toggle('active', j===i));
     initCells();
     render();
   };
   tplList.appendChild(d);
 });
+// 自由模式：点击模板把它作为一组加入画布
+const freeTplList = document.getElementById('freeTplList');
+TEMPLATES.forEach((tpl, i) => {
+  const d = makeTplThumb(tpl, i);
+  d.onclick = () => addGroup(i);
+  freeTplList.appendChild(d);
+});
+function addGroup(tplIdx) {
+  const b = baseSize();
+  const bw = Math.min(b[0], b[1]) * 0.6;
+  const n = TEMPLATES[tplIdx].length;
+  freeItems.push({ type:'group', tpl:tplIdx, x:b[0]*pages/2, y:b[1]/2, w:bw, h:bw, scale:1, rot:0, gap:16, rad:8,
+    sub:Array.from({length:n}, () => ({ p:null, crop:null, text:null })) });
+  selFree = freeItems.length - 1;
+  updateSidebar(); render();
+}
 function initCells() {
   const n = TEMPLATES[tplIndex].length;
-  cells = Array.from({length:n}, (_, i) => ({ p: photos[i] ? photos[i].id : null, zoom:1, ox:0, oy:0, crop:null }));
+  cells = Array.from({length:n}, (_, i) => ({ p: photos[i] ? photos[i].id : null, zoom:1, ox:0, oy:0, crop:null, text:null }));
   selCell = -1;
   updateSidebar();
 }
@@ -620,17 +803,21 @@ document.querySelectorAll('[data-dir]').forEach(b => {
 function updateSidebar() {
   document.getElementById('secTpl').classList.toggle('hidden', mode !== 'template');
   document.getElementById('secAspect').classList.toggle('hidden', mode === 'strip');
+  document.getElementById('secFreeTpl').classList.toggle('hidden', mode !== 'free');
   document.getElementById('secPages').classList.toggle('hidden', mode !== 'free');
   document.getElementById('secStrip').classList.toggle('hidden', mode !== 'strip');
-  document.getElementById('secCell').classList.toggle('hidden', !(mode === 'template' && selCell >= 0 && cells[selCell] && cells[selCell].p != null));
-  document.getElementById('secFree').classList.toggle('hidden', !(mode === 'free' && selFree >= 0));
+  const cellSel = mode === 'template' && selCell >= 0 && cells[selCell] && cells[selCell].p != null;
+  document.getElementById('secCell').classList.toggle('hidden', !cellSel);
+  const freeItem = mode === 'free' && selFree >= 0 && freeItems[selFree];
+  document.getElementById('secFree').classList.toggle('hidden', !(freeItem && freeItems[selFree].type !== 'group'));
   document.getElementById('modeHint').textContent = t(hintKey[mode]);
   document.getElementById('pageInfo').textContent = t('pageInfo')(pages);
   wrap.classList.toggle('noresize', mode === 'strip');
-  if (mode === 'template' && selCell >= 0 && cells[selCell]) {
-    const z = cells[selCell].zoom;
-    document.getElementById('zoomSlider').value = Math.round(z*100);
-    document.getElementById('zoomVal').textContent = z.toFixed(1);
+  if (cellSel) {
+    const cell = cells[selCell];
+    document.getElementById('zoomSlider').value = Math.round(cell.zoom*100);
+    document.getElementById('zoomVal').textContent = cell.zoom.toFixed(1);
+    document.getElementById('captInput').value = cell.text || '';
   }
 }
 
@@ -649,24 +836,68 @@ document.getElementById('bgImgInput').onchange = e => {
   if (bgImgUrl) URL.revokeObjectURL(bgImgUrl);
   bgImgUrl = URL.createObjectURL(f);
   const img = new Image();
-  img.onload = () => { bgImg = img; document.getElementById('bgFitRow').style.display = 'flex'; render(); };
+  img.onload = () => { bgImg = img; render(); };
   img.src = bgImgUrl;
   e.target.value = '';
 };
 document.getElementById('bgImgClear').onclick = () => {
   if (bgImgUrl) URL.revokeObjectURL(bgImgUrl);
   bgImg = null; bgImgUrl = null;
-  document.getElementById('bgFitRow').style.display = 'none';
   render();
 };
 document.getElementById('bgFitSel').onchange = e => { bgFit = e.target.value; render(); };
+document.querySelectorAll('#bgTypeTabs button').forEach(b => {
+  b.onclick = () => {
+    bgType = b.dataset.bgtype;
+    bgTransparent = bgType === 'transparent';
+    document.querySelectorAll('#bgTypeTabs button').forEach(e => e.classList.toggle('active', e === b));
+    document.getElementById('bgColorRow').style.display = bgType === 'color' ? 'flex' : 'none';
+    document.getElementById('bgImageRow').style.display = bgType === 'image' ? 'block' : 'none';
+    if (bgType === 'image' && !bgImg) document.getElementById('bgImgInput').click();
+    render();
+  };
+});
 document.getElementById('aspectSel').onchange = e => { aspect = e.target.value; customSize = null; render(); };
+// 单元格在模版中所占的宽高比例（异形取包围盒）
+function cellFraction(f) {
+  if (!isPolyCell(f)) return [f[2], f[3]];
+  let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
+  f.forEach(([ux,uy]) => { minx=Math.min(minx,ux); miny=Math.min(miny,uy); maxx=Math.max(maxx,ux); maxy=Math.max(maxy,uy); });
+  return [maxx-minx, maxy-miny];
+}
+document.getElementById('fitOrigBtn').onclick = () => {
+  const g = gap;
+  if (mode === 'template') {
+    // 让“最小单位”（参考格子）正好等于其原图尺寸，再反推画布尺寸
+    let ci = (selCell >= 0 && cells[selCell] && cells[selCell].p != null) ? selCell : cells.findIndex(c => c.p != null);
+    if (ci < 0) { alert(t('alertNoPhoto')); return; }
+    const ph = photoById(cells[ci].p);
+    const cr = cropOf(cells[ci], ph.img);           // 有裁剪则按裁剪后尺寸
+    const [fw, fh] = cellFraction(TEMPLATES[tplIndex][ci]);
+    if (fw <= 0 || fh <= 0) { alert(t('alertNoPhoto')); return; }
+    let W = (cr.sw + g) / fw + g;
+    let H = (cr.sh + g) / fh + g;
+    const cap = 8000, m = Math.max(W, H);
+    if (m > cap) { const s = cap/m; W *= s; H *= s; }
+    customSize = [Math.round(W), Math.round(H)];
+    render();
+  } else {
+    // 自由模式：整块画布 = 选中图片（或第一张）的原始尺寸
+    let ph = (selFree >= 0 && freeItems[selFree] && freeItems[selFree].type !== 'group') ? photoById(freeItems[selFree].p) : photos[0];
+    if (!ph) { alert(t('alertNoPhoto')); return; }
+    customSize = [ph.img.width, ph.img.height];
+    render();
+  }
+};
 document.getElementById('zoomSlider').oninput = e => {
   if (selCell >= 0 && cells[selCell]) {
     cells[selCell].zoom = +e.target.value/100;
     document.getElementById('zoomVal').textContent = cells[selCell].zoom.toFixed(1);
     render();
   }
+};
+document.getElementById('captInput').oninput = e => {
+  if (selCell >= 0 && cells[selCell]) { cells[selCell].text = e.target.value; render(); }
 };
 
 // ---------- 画布拉伸 ----------
@@ -774,11 +1005,58 @@ document.addEventListener('drop', e => {
   addFiles(e.dataTransfer.files, targetCell);
 });
 
-// ---------- 底部照片托盘 ----------
+// ---------- 侧边图片库 ----------
+const libGrid = document.getElementById('libGrid');
+function renderLibrary() {
+  libGrid.innerHTML = '';
+  if (!photos.length) {
+    libGrid.innerHTML = `<span class="libempty">${t('libEmpty')}</span>`;
+    return;
+  }
+  photos.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'libthumb';
+    d.draggable = true;
+    d.innerHTML = `<img src="${p.url}"><span class="del">×</span>`;
+    d.querySelector('.del').onclick = ev => { ev.stopPropagation(); removePhoto(p.id); };
+    d.ondragstart = ev => { dragPhotoId = p.id; ev.dataTransfer.setData('text/plain', p.id); };
+    d.onclick = () => placeFromLibrary(p.id);
+    libGrid.appendChild(d);
+  });
+}
+function placeFromLibrary(id) {
+  const p = photoById(id);
+  if (!p) return;
+  if (mode === 'template') {
+    const empty = cells.findIndex(c => c.p == null);
+    if (empty >= 0) { cells[empty] = { p:id, zoom:1, ox:0, oy:0, crop:null, text:null }; selCell = empty; }
+    updateSidebar(); render();
+  } else if (mode === 'free') {
+    // 若已选中某个模版组，优先填入它的下一个空格子
+    const sel = selFree >= 0 ? freeItems[selFree] : null;
+    if (sel && sel.type === 'group') {
+      const k = sel.sub.findIndex(s => s.p == null);
+      if (k >= 0) { sel.sub[k] = { p:id, crop:null, text: sel.sub[k].text || null }; render(); return; }
+    }
+    const b = baseSize();
+    const bw = Math.min(b[0], b[1]) * 0.45;
+    freeItems.push({ p:id, x:b[0]*pages/2, y:b[1]/2, w:bw, h:bw*p.img.height/p.img.width, scale:1, rot:0, crop:null });
+    selFree = freeItems.length - 1;
+    updateSidebar(); render();
+  } else {
+    if (!stripOrder.includes(id)) stripOrder.push(id);
+    renderTray(); render();
+  }
+}
+
+// ---------- 底部托盘（仅长图模式，用于排序） ----------
 const tray = document.getElementById('tray');
 let dragPhotoId = null, dragTrayIdx = -1;
 function renderTray() {
+  renderLibrary();
+  tray.style.display = mode === 'strip' ? 'flex' : 'none';
   tray.innerHTML = '';
+  if (mode !== 'strip') return;
   if (!photos.length) {
     tray.innerHTML = `<span class="empty-tip">${t('trayTip')}</span>`;
     return;
@@ -825,25 +1103,71 @@ function removePhoto(id) {
   photos = photos.filter(p => p.id !== id);
   stripOrder = stripOrder.filter(i => i !== id);
   delete stripCrops[id];
-  freeItems = freeItems.filter(it => it.p !== id);
+  freeItems = freeItems.filter(it => it.type === 'group' || it.p !== id);
+  freeItems.forEach(it => { if (it.type === 'group') it.sub.forEach(sc => { if (sc.p === id) { sc.p = null; sc.crop = null; } }); });
   cells.forEach(c => { if (c.p === id) { c.p = null; c.zoom = 1; c.ox = 0; c.oy = 0; c.crop = null; } });
   selCell = -1; selFree = -1; selStrip = -1;
   hidePop();
   updateSidebar(); renderTray(); render();
 }
 
-// 托盘缩略图拖到画布格子（模板模式）
-canvas.addEventListener('dragover', e => { if (mode === 'template' && dragPhotoId != null) e.preventDefault(); });
+// 图片库缩略图拖到画布：模板→填格子；自由→填模版组子格子或新增自由图；长图→按位置插入
+canvas.addEventListener('dragover', e => { if (dragPhotoId != null) e.preventDefault(); });
 canvas.addEventListener('drop', e => {
-  if (mode !== 'template' || dragPhotoId == null) return;
+  if (dragPhotoId == null) return;
   e.preventDefault();
   const pt = toCanvas(e);
-  const rects = cellRects(canvas.width, canvas.height);
-  const i = rects.findIndex(r => pointInShape(r, pt));
-  if (i >= 0) {
-    cells[i] = { p: dragPhotoId, zoom:1, ox:0, oy:0, crop:null };
-    selCell = i;
-    updateSidebar(); render();
+  if (mode === 'strip') {
+    // 按拖放位置插入长图序列（拖到某块中点之前就排在它前面）；若已在序列中则移动到该位置
+    const rects = stripRects(canvas.width, canvas.height);
+    let idx = rects.length;
+    for (let i = 0; i < rects.length; i++) {
+      const r = rects[i];
+      const mid = stripDir === 'v' ? r.y + r.h/2 : r.x + r.w/2;
+      const p = stripDir === 'v' ? pt.y : pt.x;
+      if (p < mid) { idx = i; break; }
+    }
+    const cur = stripOrder.indexOf(dragPhotoId);
+    if (cur >= 0) { stripOrder.splice(cur, 1); if (cur < idx) idx--; }  // 已存在→先移除再插入（即移动）
+    stripOrder.splice(idx, 0, dragPhotoId);
+    selStrip = idx;
+    renderTray(); render();
+    dragPhotoId = null;
+    return;
+  }
+  if (mode === 'template') {
+    const shapes = cellShapes(canvas.width, canvas.height);
+    const i = shapes.findIndex(r => pointInShape(r, pt));
+    if (i >= 0) {
+      const keepText = cells[i] ? cells[i].text : null;
+      cells[i] = { p: dragPhotoId, zoom:1, ox:0, oy:0, crop:null, text: keepText };
+      selCell = i;
+      updateSidebar(); render();
+    }
+  } else if (mode === 'free') {
+    let filled = false;
+    for (let gi = freeItems.length - 1; gi >= 0; gi--) {
+      const it = freeItems[gi];
+      if (it.type !== 'group') continue;
+      const lp = toLocal(pt, it);
+      const bw = it.w*it.scale, bh = it.h*it.scale;
+      if (Math.abs(lp.x) <= bw/2 && Math.abs(lp.y) <= bh/2) {
+        const k = groupCellAt(it, pt);
+        if (k >= 0) {
+          const keepText = it.sub[k] ? it.sub[k].text : null;
+          it.sub[k] = { p: dragPhotoId, crop:null, text: keepText };
+          selFree = gi; filled = true; updateSidebar(); render();
+        }
+        break;
+      }
+    }
+    if (!filled) {
+      const p = photoById(dragPhotoId);
+      const b = baseSize();
+      const bw = Math.min(b[0], b[1]) * 0.45;
+      freeItems.push({ p: dragPhotoId, x: pt.x, y: pt.y, w: bw, h: bw*p.img.height/p.img.width, scale:1, rot:0, crop:null });
+      selFree = freeItems.length - 1; updateSidebar(); render();
+    }
   }
   dragPhotoId = null;
 });
@@ -893,13 +1217,22 @@ canvas.addEventListener('pointerdown', e => {
       const w = it.w*it.scale, h = it.h*it.scale;
       const lp = toLocal(pt, it);
       const tol = 26;
-      if (Math.hypot(lp.x - w/2, lp.y - h/2) < tol) {
-        drag = { type:'scale', it, d0: Math.hypot(pt.x-it.x, pt.y-it.y), s0: it.scale };
-        return;
-      }
+      // 旋转手柄（所有自由项）
       if (Math.hypot(lp.x, lp.y + h/2 + 40) < tol) {
         drag = { type:'rotate', it, a0: Math.atan2(pt.y-it.y, pt.x-it.x), r0: it.rot };
         return;
+      }
+      if (it.type === 'group') {
+        // 模板组：右下角自由拉伸，右边拉宽，下边拉高（scale 保持 1，直接改 w/h）
+        if (Math.hypot(lp.x - w/2, lp.y - h/2) < tol) { drag = { type:'gresize', it, axis:'both' }; return; }
+        if (Math.hypot(lp.x - w/2, lp.y) < tol)       { drag = { type:'gresize', it, axis:'w' }; return; }
+        if (Math.hypot(lp.x, lp.y - h/2) < tol)       { drag = { type:'gresize', it, axis:'h' }; return; }
+      } else {
+        // 普通图片：等比缩放
+        if (Math.hypot(lp.x - w/2, lp.y - h/2) < tol) {
+          drag = { type:'scale', it, d0: Math.hypot(pt.x-it.x, pt.y-it.y), s0: it.scale };
+          return;
+        }
       }
     }
     let hit = -1;
@@ -949,6 +1282,10 @@ canvas.addEventListener('pointermove', e => {
   } else if (drag.type === 'scale') {
     const d = Math.hypot(pt.x - drag.it.x, pt.y - drag.it.y);
     drag.it.scale = Math.max(0.1, Math.min(6, drag.s0 * d / Math.max(drag.d0, 1)));
+  } else if (drag.type === 'gresize') {
+    const lp = toLocal(pt, drag.it);
+    if (drag.axis !== 'h') drag.it.w = Math.max(80, Math.abs(lp.x) * 2);
+    if (drag.axis !== 'w') drag.it.h = Math.max(80, Math.abs(lp.y) * 2);
   } else if (drag.type === 'rotate') {
     drag.it.rot = drag.r0 + Math.atan2(pt.y - drag.it.y, pt.x - drag.it.x) - drag.a0;
   }
@@ -979,11 +1316,22 @@ canvas.addEventListener('pointerup', e => {
       [t('popRemove'), () => { cells[i] = { p:null, zoom:1, ox:0, oy:0, crop:null }; selCell = -1; updateSidebar(); render(); }],
     ]);
   } else if (mode === 'free' && selFree >= 0) {
-    const i = selFree;
-    showPop(e.clientX, e.clientY, [
-      [t('popCrop'), () => openFreeCrop(i)],
-      [t('popDelete'), () => { freeItems.splice(i, 1); selFree = -1; updateSidebar(); render(); }],
-    ]);
+    const i = selFree, it = freeItems[i];
+    if (it.type === 'group') {
+      const k = groupCellAt(it, toCanvas(e));
+      const btns = [];
+      if (k >= 0 && it.sub[k] && it.sub[k].p != null) {
+        btns.push([t('popCrop'), () => openGroupCrop(i, k)]);
+        btns.push([t('popCellClear'), () => { it.sub[k] = { p:null, crop:null, text:null }; render(); }]);
+      }
+      btns.push([t('popDelGroup'), () => { freeItems.splice(i, 1); selFree = -1; updateSidebar(); render(); }]);
+      showPop(e.clientX, e.clientY, btns);
+    } else {
+      showPop(e.clientX, e.clientY, [
+        [t('popCrop'), () => openFreeCrop(i)],
+        [t('popDelete'), () => { freeItems.splice(i, 1); selFree = -1; updateSidebar(); render(); }],
+      ]);
+    }
   } else if (mode === 'strip' && selStrip >= 0) {
     const i = selStrip;
     showPop(e.clientX, e.clientY, [
@@ -1058,6 +1406,12 @@ function openStripCrop(i) {
     if (crop) stripCrops[id] = crop; else delete stripCrops[id];
     render();
   });
+}
+function openGroupCrop(gi, k) {
+  const it = freeItems[gi]; if (!it || it.type !== 'group') return;
+  const sc = it.sub[k]; const ph = sc && photoById(sc.p);
+  if (!ph) return;
+  openCrop(ph.img, sc.crop, crop => { sc.crop = crop; render(); });
 }
 function openCrop(img, existing, onApply) {
   const maxW = Math.min(innerWidth * 0.82, 1000);
@@ -1191,21 +1545,41 @@ window.addEventListener('keydown', e => {
 });
 
 // ---------- 导出 ----------
-document.getElementById('exportBtn').onclick = () => {
-  if (!photos.length) { alert(t('alertNoPhoto')); return; }
+// 把当前画布合成成一张离屏画布（fmt 决定 jpg 是否补白底）
+function composeCanvas(fmt) {
   const [W, H] = canvasSize();
   const target = +document.getElementById('sizeSel').value;
   const k = target / Math.max(W, H);
   const off = document.createElement('canvas');
   off.width = Math.round(W*k); off.height = Math.round(H*k);
   const oc = off.getContext('2d');
+  // JPG 不支持透明，透明背景时补白底
+  if (fmt === 'jpg' && bgType !== 'color') { oc.fillStyle = '#ffffff'; oc.fillRect(0, 0, off.width, off.height); }
   oc.scale(k, k);
   renderScene(oc, W, H, false);
+  return off;
+}
+// 把合成结果作为一张新图片加入图片库（可再拖进拼图/模版组，实现嵌套复用）
+function addComposedToLibrary() {
+  const off = composeCanvas('png');
+  const url = off.toDataURL('image/png');
+  const img = new Image();
+  img.onload = () => { photos.push({ id: nextId++, img, url }); renderLibrary(); };
+  img.src = url;
+}
+document.getElementById('exportBtn').onclick = () => {
+  if (!photos.length) { alert(t('alertNoPhoto')); return; }
   const fmt = document.getElementById('fmtSel').value;
+  const off = composeCanvas(fmt);
   const a = document.createElement('a');
   a.download = `拼图_${Date.now()}.${fmt}`;
   a.href = fmt === 'jpg' ? off.toDataURL('image/jpeg', 0.92) : off.toDataURL('image/png');
   a.click();
+  addComposedToLibrary();  // 导出后也存入图片库，方便复用/嵌套
+};
+document.getElementById('saveLibBtn').onclick = () => {
+  if (!photos.length) { alert(t('alertNoPhoto')); return; }
+  addComposedToLibrary();
 };
 document.getElementById('clearBtn').onclick = () => {
   if (!photos.length || confirm(t('confirmClear'))) {
