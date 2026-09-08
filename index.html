@@ -115,9 +115,40 @@
   .btn.danger { color:#e5484d; }
   .btn.danger:hover { background:#fdecec; }
   .subh { font-size:12px; color:var(--text); font-weight:600; margin-bottom:8px; }
+  .custom-tpl { display:flex; align-items:center; gap:8px; margin-top:12px; font-size:12px; color:var(--muted); }
+  .custom-tpl input[type=number] { width:56px; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:7px 8px; font-size:13px; text-align:center; }
+  .custom-tpl input[type=number]:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .custom-tpl .btn { width:auto; flex:1; margin:0; padding:8px 0; font-size:13px; }
+  .custom-tpl .ctl { flex-shrink:0; }
+  .custom-tpl + .custom-tpl { margin-top:8px; }
   ::-webkit-scrollbar { width:9px; height:9px; }
   ::-webkit-scrollbar-thumb { background:#d2d7e0; border-radius:5px; border:2px solid var(--panel); }
   ::-webkit-scrollbar-thumb:hover { background:#bcc3d0; }
+  /* ---------- 手机 / 窄屏自适应 ---------- */
+  @media (max-width: 820px) {
+    header { padding:10px 14px; gap:10px; }
+    header h1 { font-size:15px; }
+    header .hint { display:none; }
+    #sizeLabel { font-size:11px; padding:3px 8px; margin-left:auto; }
+    .main { flex-direction:column; }
+    .stage { order:1; flex:1 1 0; min-height:180px; padding:14px; }
+    #canvas { border-radius:6px; }
+    .library { order:2; width:auto; border-left:none; border-top:1px solid var(--border); padding:10px 12px; }
+    .library h3 { display:none; }
+    .libgrid { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
+    .libthumb { width:60px; height:60px; aspect-ratio:auto; flex-shrink:0; }
+    .sidebar { order:3; width:100%; border-right:none; border-top:1px solid var(--border); max-height:46vh; padding:14px 16px; }
+    .tpls, #secFreeTpl .tpls { grid-template-columns:repeat(6,1fr); }
+    .btn, .tabs button, select, #pop button { min-height:42px; }
+    .rz[data-dir="r"] { width:14px; height:44px; margin-top:-22px; right:-9px; }
+    .rz[data-dir="b"] { height:14px; width:44px; margin-left:-22px; bottom:-9px; }
+    .rz[data-dir="rb"] { width:20px; height:20px; right:-10px; bottom:-10px; }
+  }
+  @media (max-width: 480px) {
+    .tpls, #secFreeTpl .tpls { grid-template-columns:repeat(5,1fr); }
+    header h1 { font-size:14px; }
+    .langsw button { padding:5px 10px; }
+  }
 </style>
 </head>
 <body>
@@ -148,6 +179,19 @@
     <div class="sec" id="secTpl">
       <h3 data-i18n="chooseTpl">选择模板</h3>
       <div class="tpls" id="tplList"></div>
+      <div class="subh" style="margin-top:14px" data-i18n="customTplLabel">自定义模版</div>
+      <div class="custom-tpl">
+        <span class="ctl" data-i18n="customCountLabel">张数</span>
+        <input type="number" id="customN" min="1" max="20" value="4" aria-label="count">
+        <button class="btn ghost" id="genCountBtn" data-i18n="genTpl">生成</button>
+      </div>
+      <div class="custom-tpl">
+        <span class="ctl" data-i18n="customGridLabel">行列</span>
+        <input type="number" id="customRows" min="1" max="8" value="3" aria-label="rows">
+        <span>×</span>
+        <input type="number" id="customCols" min="1" max="8" value="3" aria-label="cols">
+        <button class="btn ghost" id="genTplBtn" data-i18n="genTpl">生成</button>
+      </div>
     </div>
     <div class="sec" id="secAspect">
       <h3 data-i18n="aspectTitle">画布比例（可拖画布边角自由拉伸）</h3>
@@ -286,11 +330,11 @@ let lang = 'zh';
 const I18N = {
   zh: {
     appName:'拼图工具', import:'＋ 导入照片', mode:'模式', modeTemplate:'模板', modeFree:'自由', modeStrip:'长图',
-    chooseTpl:'选择模板', aspectTitle:'画布比例（可拖画布边角自由拉伸）',
+    chooseTpl:'选择模板', customTplLabel:'自定义模版', customCountLabel:'张数', customGridLabel:'行列', genTpl:'生成', aspectTitle:'画布比例（可拖画布边角自由拉伸）',
     ar11:'1 : 1 正方形', ar43:'4 : 3 横向', ar34:'3 : 4 竖向', ar169:'16 : 9 宽屏', ar916:'9 : 16 手机屏',
     fitOriginal:'📐 适配原图尺寸',
     pagesTitle:'画布页（左右拼接）', pageL:'＋左加页', pageR:'＋右加页', pageDel:'－减页',
-    stripDirTitle:'拼接方向', dirV:'↓ 竖向', dirH:'→ 横向', stripTip:'点击画布上的图块可前移 / 后移 / 移除',
+    stripDirTitle:'拼接方向', dirV:'↓ 竖向', dirH:'→ 横向', stripTip:'拖动画布上的图块可改顺序 · 单击可前移/后移/移除',
     styleTitle:'样式调节', gap:'间距', radius:'圆角', bgLabel:'背景', bgColorTab:'纯色', bgTransTab:'透明', bgImgTab:'图片',
     bgColor:'背景色', bgNone:'透明背景 (PNG)', bgImgBtn:'🖼 选择图片', clear:'清除',
     saveLib:'＋ 存入图片库',
@@ -303,7 +347,7 @@ const I18N = {
     cropTip2:'拖动裁剪框移动位置，拖四角调整大小', cancel:'取消', cropReset:'重置为全图', cropOk:'✔ 应用裁剪',
     hintTemplate:'从右侧图片库拖图进格子 · 拖到别的格子换位 · 选中格子可加文字标题 · 单击弹出裁剪菜单',
     hintFree:'点模版加一组 · 右下角/右边/下边手柄可拉伸(改宽高) · 选中组后点图片库填图 · 也可拖图到空白当独立图片',
-    hintStrip:'点击图块可裁剪/前移/后移/移除 · 拖动底部缩略图排序',
+    hintStrip:'拖动画布上的图块改顺序 · 单击可裁剪/前移/后移/移除 · 右侧图片库可拖图进来',
     pageInfo:n=>`当前 ${n} 页，导出时拼成一张长图`, sizeLabel:(w,h)=>`画布 ${w} × ${h} px`,
     trayTip:'点击左上角「导入照片」，或直接把图片拖进页面',
     alertNoPhoto:'请先导入照片', confirmClear:'确定清空所有照片和布局？',
@@ -315,11 +359,11 @@ const I18N = {
   },
   en: {
     appName:'Collage', import:'＋ Import Photos', mode:'Mode', modeTemplate:'Grid', modeFree:'Free', modeStrip:'Stitch',
-    chooseTpl:'Choose Layout', aspectTitle:'Canvas Ratio (drag corners to resize)',
+    chooseTpl:'Choose Layout', customTplLabel:'Custom layout', customCountLabel:'Count', customGridLabel:'Grid', genTpl:'Generate', aspectTitle:'Canvas Ratio (drag corners to resize)',
     ar11:'1 : 1 Square', ar43:'4 : 3 Landscape', ar34:'3 : 4 Portrait', ar169:'16 : 9 Wide', ar916:'9 : 16 Phone',
     fitOriginal:'📐 Fit to Original Size',
     pagesTitle:'Canvas Pages (join L–R)', pageL:'＋ Add Left', pageR:'＋ Add Right', pageDel:'－ Remove',
-    stripDirTitle:'Stitch Direction', dirV:'↓ Vertical', dirH:'→ Horizontal', stripTip:'Click a tile to move up / down / remove',
+    stripDirTitle:'Stitch Direction', dirV:'↓ Vertical', dirH:'→ Horizontal', stripTip:'Drag a tile on the canvas to reorder · click to move/remove',
     styleTitle:'Style', gap:'Gap', radius:'Corners', bgLabel:'Background', bgColorTab:'Color', bgTransTab:'None', bgImgTab:'Image',
     bgColor:'Background', bgNone:'Transparent (PNG)', bgImgBtn:'🖼 Choose Image', clear:'Clear',
     saveLib:'＋ Save to Library',
@@ -332,7 +376,7 @@ const I18N = {
     cropTip2:'Drag the box to move, drag corners to resize', cancel:'Cancel', cropReset:'Reset to Full', cropOk:'✔ Apply Crop',
     hintTemplate:'Drag photos from the library into cells · drag to another cell to swap · add a caption to a selected cell · click for crop menu',
     hintFree:'Click a layout to add a group · corner/right/bottom handles stretch it · select it then click library photos to fill · or drop onto empty space as standalone images',
-    hintStrip:'Click a tile to crop/move/remove · drag thumbnails below to reorder',
+    hintStrip:'Drag a tile on the canvas to reorder · click to crop/move/remove · drag photos from the library in',
     pageInfo:n=>`${n} page${n>1?'s':''}, exported as one long image`, sizeLabel:(w,h)=>`Canvas ${w} × ${h} px`,
     trayTip:'Click "Import Photos" at top-left, or drag images onto the page',
     alertNoPhoto:'Please import photos first', confirmClear:'Clear all photos and layout?',
@@ -772,6 +816,47 @@ function addGroup(tplIdx) {
   selFree = freeItems.length - 1;
   updateSidebar(); render();
 }
+// ---------- 自定义模版：按张数生成最匀称的网格 ----------
+// 固定行×列网格
+function genRowsCols(rows, cols) {
+  rows = Math.max(1, Math.min(8, Math.round(rows)));
+  cols = Math.max(1, Math.min(8, Math.round(cols)));
+  const rh = 1/rows, cw = 1/cols, out = [];
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) out.push([c*cw, r*rh, cw, rh]);
+  return out;
+}
+// 按张数自动排最匀称的网格
+function genGrid(n) {
+  n = Math.max(1, Math.min(20, Math.round(n)));
+  const rows = Math.max(1, Math.round(Math.sqrt(n)));
+  const base = Math.floor(n / rows), rem = n % rows;
+  const rh = 1 / rows, out = [];
+  for (let r = 0; r < rows; r++) {
+    const cols = base + (r < rem ? 1 : 0);
+    const cw = 1 / cols;
+    for (let c = 0; c < cols; c++) out.push([c*cw, r*rh, cw, rh]);
+  }
+  return out;
+}
+let customTplIndex = -1, customThumb = null;
+function generateCustomTemplate(layout) {
+  if (customTplIndex < 0) { TEMPLATES.push(layout); customTplIndex = TEMPLATES.length - 1; }
+  else TEMPLATES[customTplIndex] = layout;
+  if (customThumb) customThumb.remove();
+  customThumb = makeTplThumb(layout, customTplIndex);
+  customThumb.onclick = () => {
+    tplIndex = customTplIndex;
+    document.querySelectorAll('#tplList .tpl').forEach(e => e.classList.remove('active'));
+    customThumb.classList.add('active');
+    initCells(); render();
+  };
+  tplList.appendChild(customThumb);
+  tplIndex = customTplIndex;
+  document.querySelectorAll('#tplList .tpl').forEach(e => e.classList.remove('active'));
+  customThumb.classList.add('active');
+  initCells(); render();
+}
 function initCells() {
   const n = TEMPLATES[tplIndex].length;
   cells = Array.from({length:n}, (_, i) => ({ p: photos[i] ? photos[i].id : null, zoom:1, ox:0, oy:0, crop:null, text:null }));
@@ -858,6 +943,15 @@ document.querySelectorAll('#bgTypeTabs button').forEach(b => {
   };
 });
 document.getElementById('aspectSel').onchange = e => { aspect = e.target.value; customSize = null; render(); };
+document.getElementById('genTplBtn').onclick = () => {
+  const rows = parseInt(document.getElementById('customRows').value, 10) || 1;
+  const cols = parseInt(document.getElementById('customCols').value, 10) || 1;
+  generateCustomTemplate(genRowsCols(rows, cols));
+};
+document.getElementById('genCountBtn').onclick = () => {
+  const n = parseInt(document.getElementById('customN').value, 10) || 1;
+  generateCustomTemplate(genGrid(n));
+};
 // 单元格在模版中所占的宽高比例（异形取包围盒）
 function cellFraction(f) {
   if (!isPolyCell(f)) return [f[2], f[3]];
@@ -1251,6 +1345,7 @@ canvas.addEventListener('pointerdown', e => {
   } else { // strip
     const rects = stripRects(canvas.width, canvas.height);
     selStrip = rects.findIndex(r => pt.x >= r.x && pt.x <= r.x+r.w && pt.y >= r.y && pt.y <= r.y+r.h);
+    if (selStrip >= 0) drag = { type:'striporder', from:selStrip };  // 可拖拽改顺序
     render();
   }
 });
@@ -1286,6 +1381,23 @@ canvas.addEventListener('pointermove', e => {
     const lp = toLocal(pt, drag.it);
     if (drag.axis !== 'h') drag.it.w = Math.max(80, Math.abs(lp.x) * 2);
     if (drag.axis !== 'w') drag.it.h = Math.max(80, Math.abs(lp.y) * 2);
+  } else if (drag.type === 'striporder') {
+    // 拖拽实时改长图顺序：按指针位置算目标位，边拖边移动
+    const rects = stripRects(canvas.width, canvas.height);
+    let idx = rects.length - 1;
+    for (let i = 0; i < rects.length; i++) {
+      const r = rects[i];
+      const mid = stripDir === 'v' ? r.y + r.h/2 : r.x + r.w/2;
+      const p = stripDir === 'v' ? pt.y : pt.x;
+      if (p < mid) { idx = i; break; }
+    }
+    if (idx !== drag.from) {
+      const it = stripOrder.splice(drag.from, 1)[0];
+      if (drag.from < idx) idx--;
+      stripOrder.splice(idx, 0, it);
+      drag.from = idx; selStrip = idx;
+      renderTray();
+    }
   } else if (drag.type === 'rotate') {
     drag.it.rot = drag.r0 + Math.atan2(pt.y - drag.it.y, pt.x - drag.it.x) - drag.a0;
   }
