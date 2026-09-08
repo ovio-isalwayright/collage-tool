@@ -124,30 +124,52 @@
   ::-webkit-scrollbar { width:9px; height:9px; }
   ::-webkit-scrollbar-thumb { background:#d2d7e0; border-radius:5px; border:2px solid var(--panel); }
   ::-webkit-scrollbar-thumb:hover { background:#bcc3d0; }
-  /* ---------- 手机 / 窄屏自适应 ---------- */
+  .m-only { display:none; }
+  #mNav { display:none; }
+  .mpanel-hide { display:none !important; }
+  /* ---------- 手机 / 窄屏自适应（醒图风格：上预览 + 下面板 + 底部标签栏） ---------- */
   @media (max-width: 820px) {
-    header { padding:10px 14px; gap:10px; }
+    header { padding:9px 14px; gap:10px; }
     header h1 { font-size:15px; }
     header .hint { display:none; }
-    #sizeLabel { font-size:11px; padding:3px 8px; margin-left:auto; }
-    .main { flex-direction:column; }
-    .stage { order:1; flex:1 1 0; min-height:180px; padding:14px; }
+    #sizeLabel { display:none; }
+    .langsw { margin-left:auto; }
+    .m-only { display:inline-flex; align-items:center; justify-content:center; }
+    #mExport { border:none; background:var(--accent); color:#fff; font-weight:700; font-size:13px; padding:8px 16px; border-radius:20px; cursor:pointer; box-shadow:0 2px 8px rgba(79,124,255,.35); }
+    .main { flex-direction:column; min-height:0; }
+    .stage { order:1; flex:1 1 0; min-height:150px; padding:12px; }
     #canvas { border-radius:6px; }
-    .library { order:2; width:auto; border-left:none; border-top:1px solid var(--border); padding:10px 12px; }
+    /* 图片库：横向缩略图条，仅“布局”标签显示 */
+    .library { order:2; width:auto; border-left:none; border-top:1px solid var(--border); padding:8px 12px; flex:0 0 auto; }
     .library h3 { display:none; }
     .libgrid { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
-    .libthumb { width:60px; height:60px; aspect-ratio:auto; flex-shrink:0; }
-    .sidebar { order:3; width:100%; border-right:none; border-top:1px solid var(--border); max-height:46vh; padding:14px 16px; }
-    .tpls, #secFreeTpl .tpls { grid-template-columns:repeat(6,1fr); }
-    .btn, .tabs button, select, #pop button { min-height:42px; }
-    .rz[data-dir="r"] { width:14px; height:44px; margin-top:-22px; right:-9px; }
-    .rz[data-dir="b"] { height:14px; width:44px; margin-left:-22px; bottom:-9px; }
-    .rz[data-dir="rb"] { width:20px; height:20px; right:-10px; bottom:-10px; }
+    .libthumb { width:56px; height:56px; aspect-ratio:auto; flex-shrink:0; }
+    /* 下方控制面板 */
+    .sidebar { order:3; width:100%; border-right:none; border-top:1px solid var(--border); flex:0 0 auto; max-height:40vh; padding:12px 14px; }
+    .sidebar .sec { margin-bottom:14px; }
+    #secImport { display:none; }            /* 手机端用顶部/模式区导入即可，节省空间 */
+    /* 模板、模版组缩略图：单行横向滑动 */
+    .tpls, #secFreeTpl .tpls { display:flex; overflow-x:auto; gap:8px; padding-bottom:2px; }
+    .tpls .tpl { width:60px; flex-shrink:0; }
+    /* 画布比例做成横向 chips（把 select 也放大好点） */
+    #aspectSel { width:100%; }
+    .btn, .tabs button, select, #pop button { min-height:44px; }
+    .tabs button { font-size:14px; }
+    .tray { display:none !important; }       /* 长图排序用画布拖拽即可 */
+    .rz[data-dir="r"] { width:14px; height:48px; margin-top:-24px; right:-9px; }
+    .rz[data-dir="b"] { height:14px; width:48px; margin-left:-24px; bottom:-9px; }
+    .rz[data-dir="rb"] { width:22px; height:22px; right:-11px; bottom:-11px; }
+    /* 底部标签栏 */
+    #mNav { display:flex; flex:0 0 auto; border-top:1px solid var(--border); background:var(--panel); }
+    #mNav button { flex:1; border:none; background:transparent; padding:8px 0 10px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); }
+    #mNav button span { font-size:18px; line-height:1; }
+    #mNav button em { font-style:normal; font-size:11px; font-weight:600; }
+    #mNav button.active { color:var(--accent); }
   }
   @media (max-width: 480px) {
-    .tpls, #secFreeTpl .tpls { grid-template-columns:repeat(5,1fr); }
     header h1 { font-size:14px; }
-    .langsw button { padding:5px 10px; }
+    .langsw button { padding:5px 9px; }
+    #mExport { padding:7px 13px; }
   }
 </style>
 </head>
@@ -161,14 +183,15 @@
     <button data-lang="zh" class="active">中</button>
     <button data-lang="en">EN</button>
   </div>
+  <button id="mExport" class="m-only" data-i18n="mExport">⬇ 导出</button>
 </header>
 <div class="main">
   <div class="sidebar">
-    <div class="sec">
+    <div class="sec" id="secImport">
       <button class="btn" id="uploadBtn" data-i18n="import">＋ 导入照片</button>
       <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
     </div>
-    <div class="sec">
+    <div class="sec" id="secMode">
       <h3 data-i18n="mode">模式</h3>
       <div class="tabs">
         <button data-mode="template" class="active" data-i18n="modeTemplate">模板</button>
@@ -226,7 +249,7 @@
       </div>
       <p class="tip" style="margin-top:8px" data-i18n="stripTip">点击画布上的图块可前移 / 后移 / 移除</p>
     </div>
-    <div class="sec">
+    <div class="sec" id="secStyle">
       <h3 data-i18n="styleTitle">样式调节</h3>
       <label class="row"><span data-i18n="gap">间距</span> <input type="range" id="gapSlider" min="0" max="60" value="12"><span class="val" id="gapVal">12</span></label>
       <label class="row"><span data-i18n="radius">圆角</span> <input type="range" id="radSlider" min="0" max="60" value="8"><span class="val" id="radVal">8</span></label>
@@ -264,7 +287,7 @@
       </div>
       <p class="tip" data-i18n="freeTip">拖动移动，右下角手柄缩放，顶部手柄旋转，单击弹出裁剪菜单</p>
     </div>
-    <div class="sec">
+    <div class="sec" id="secExport">
       <h3 data-i18n="exportTitle">导出</h3>
       <div class="export-card">
         <div class="exp-grid">
@@ -296,6 +319,11 @@
 </div>
 <div class="tray" id="tray"></div>
 <div id="dropOverlay"><span data-i18n="dropTip">📥 松开即可导入照片</span></div>
+<nav id="mNav">
+  <button data-mpanel="layout" class="active"><span>▦</span><em data-i18n="navLayout">布局</em></button>
+  <button data-mpanel="style"><span>🎨</span><em data-i18n="navStyle">样式</em></button>
+  <button data-mpanel="export"><span>⬇</span><em data-i18n="navExport">导出</em></button>
+</nav>
 <div id="pop"></div>
 <div id="cropModal">
   <canvas id="cropCanvas"></canvas>
@@ -356,6 +384,7 @@ const I18N = {
     captPh:'格子标题（可留空）', freeTplTitle:'添加模版组（可整体缩放）',
     freeTplTip:'点击一个模版把它作为一组加到画布，之后可整体拖动/缩放，从右侧图片库拖图进格子',
     popCellClear:'🗑 清空此格', popDelGroup:'🗑 删除整组',
+    mExport:'⬇ 导出', navLayout:'布局', navStyle:'样式', navExport:'导出',
   },
   en: {
     appName:'Collage', import:'＋ Import Photos', mode:'Mode', modeTemplate:'Grid', modeFree:'Free', modeStrip:'Stitch',
@@ -385,6 +414,7 @@ const I18N = {
     captPh:'Cell caption (optional)', freeTplTitle:'Add Layout Group (scales as one)',
     freeTplTip:'Click a layout to add it as one group; drag/scale it as a whole, and drag photos from the library into its cells',
     popCellClear:'🗑 Clear Cell', popDelGroup:'🗑 Delete Group',
+    mExport:'⬇ Export', navLayout:'Layout', navStyle:'Style', navExport:'Export',
   },
 };
 function t(k) { const v = I18N[lang][k]; return v !== undefined ? v : I18N.zh[k]; }
@@ -1708,12 +1738,39 @@ document.querySelectorAll('#langSw button').forEach(b => {
   b.onclick = () => { lang = b.dataset.lang; applyLang(); };
 });
 
+// ---------- 手机底部标签栏（布局 / 样式 / 导出） ----------
+let mPanel = 'layout';
+const M_GROUPS = {
+  layout: ['secTpl','secAspect','secFreeTpl','secPages','secStrip','secCell','secFree'],
+  style:  ['secStyle'],
+  export: ['secExport'],
+};
+function isMobile() { return window.innerWidth <= 820; }
+function applyMobilePanel() {
+  const mobile = isMobile();
+  const allIds = [].concat(M_GROUPS.layout, M_GROUPS.style, M_GROUPS.export);
+  allIds.forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    el.classList.toggle('mpanel-hide', mobile && !M_GROUPS[mPanel].includes(id));
+  });
+  const lib = document.querySelector('.library');
+  if (lib) lib.classList.toggle('mpanel-hide', mobile && mPanel !== 'layout');
+  document.querySelectorAll('#mNav button').forEach(b => b.classList.toggle('active', b.dataset.mpanel === mPanel));
+  render();
+}
+document.querySelectorAll('#mNav button').forEach(b => {
+  b.onclick = () => { mPanel = b.dataset.mpanel; applyMobilePanel(); };
+});
+document.getElementById('mExport').onclick = () => document.getElementById('exportBtn').click();
+window.addEventListener('resize', applyMobilePanel);
+
 // ---------- 初始化 ----------
 initCells();
 updateSidebar();
 renderTray();
 render();
 applyLang();
+applyMobilePanel();
 </script>
 </body>
 </html>
