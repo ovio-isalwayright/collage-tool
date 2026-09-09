@@ -115,6 +115,16 @@
   .btn.danger { color:#e5484d; }
   .btn.danger:hover { background:#fdecec; }
   .subh { font-size:12px; color:var(--text); font-weight:600; margin-bottom:8px; }
+  #cutModal { position:fixed; inset:0; background:rgba(25,30,45,.6); backdrop-filter:blur(3px); z-index:200; display:none; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+  #cutModal.show { display:flex; }
+  #cutCanvas { border-radius:12px; touch-action:none; box-shadow:var(--shadow-lg); cursor:crosshair;
+    background-color:#fff; background-image:linear-gradient(45deg,#dde1ea 25%,transparent 25%),linear-gradient(-45deg,#dde1ea 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#dde1ea 75%),linear-gradient(-45deg,transparent 75%,#dde1ea 75%); background-size:20px 20px; background-position:0 0,0 10px,10px -10px,-10px 0px; }
+  #cutModal .tip2 { color:#eef1f6; font-size:13px; max-width:min(90vw,640px); text-align:center; }
+  .cutBar { display:flex; align-items:center; gap:18px; background:var(--panel); padding:10px 16px; border-radius:12px; }
+  .cutrow { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text); }
+  .cutrow input[type=range] { width:150px; accent-color:var(--accent); }
+  .cutout-tabs { width:auto; }
+  .cutout-tabs button { padding:7px 16px; }
   .custom-tpl { display:flex; align-items:center; gap:8px; margin-top:12px; font-size:12px; color:var(--muted); }
   .custom-tpl input { width:56px; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:7px 8px; font-size:13px; text-align:center; }
   .custom-tpl input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
@@ -137,6 +147,7 @@
     .langsw { margin-left:auto; }
     .m-only { display:inline-flex; align-items:center; justify-content:center; }
     #mExport { border:none; background:var(--accent); color:#fff; font-weight:700; font-size:13px; padding:8px 16px; border-radius:20px; cursor:pointer; box-shadow:0 2px 8px rgba(79,124,255,.35); }
+    #mImport { border:none; background:var(--ghost); color:var(--text); font-weight:700; font-size:13px; padding:8px 14px; border-radius:20px; cursor:pointer; }
     .main { flex-direction:column; min-height:0; }
     .stage { order:1; flex:1 1 auto; min-height:38vh; padding:10px; }
     #canvas { border-radius:6px; }
@@ -186,6 +197,7 @@
     <button data-lang="zh" class="active">中</button>
     <button data-lang="en">EN</button>
   </div>
+  <button id="mImport" class="m-only" data-i18n="mImport">＋ 图片</button>
   <button id="mExport" class="m-only" data-i18n="mExport">⬇ 导出</button>
 </header>
 <div class="main">
@@ -269,7 +281,7 @@
     </div>
     <div class="sec hidden" id="secCell">
       <h3 data-i18n="cellTitle">选中格子</h3>
-      <label class="row"><span data-i18n="zoom">缩放</span> <input type="range" id="zoomSlider" min="100" max="300" value="100"><span class="val" id="zoomVal">1.0</span></label>
+      <label class="row"><span data-i18n="zoom">缩放</span> <input type="range" id="zoomSlider" min="20" max="300" value="100"><span class="val" id="zoomVal">1.0</span></label>
       <input type="text" class="capt" id="captInput" data-i18n-ph="captPh" placeholder="格子标题（可留空）">
       <p class="tip" data-i18n="cellTip">拖动格内照片调整位置，滚轮或滑块缩放，单击弹出裁剪菜单，双击清空</p>
     </div>
@@ -330,6 +342,21 @@
     <button id="cropOk" data-i18n="cropOk">✔ 应用裁剪</button>
   </div>
 </div>
+<div id="cutModal">
+  <canvas id="cutCanvas"></canvas>
+  <div class="cutBar">
+    <label class="cutrow"><span data-i18n="cutTol">容差</span> <input type="range" id="cutTol" min="10" max="150" value="60"></label>
+    <div class="tabs cutout-tabs" id="cutOutSel">
+      <button data-out="transparent" class="active" data-i18n="cutTransparent">透明</button>
+      <button data-out="white" data-i18n="cutWhite">白底</button>
+    </div>
+  </div>
+  <span class="tip2" data-i18n="cutTip">自动去掉四周接近纯色的背景（适合白墙/纯色底），拖容差调整强度，点图可重选背景色</span>
+  <div class="cropBtns">
+    <button id="cutCancel" data-i18n="cancel">取消</button>
+    <button id="cutOk" data-i18n="cutApply">✔ 应用抠图</button>
+  </div>
+</div>
 
 <script>
 'use strict';
@@ -379,8 +406,10 @@ const I18N = {
     libTitle:'图片库（可拖入画布）', libEmpty:'还没有图片，点左上角「导入照片」或把图片拖进来',
     captPh:'格子标题（可留空）', freeTplTitle:'添加模版组（可整体缩放）',
     freeTplTip:'点击一个模版把它作为一组加到画布，之后可整体拖动/缩放，从右侧图片库拖图进格子',
-    popCellClear:'🗑 清空此格', popDelGroup:'🗑 删除整组',
-    mExport:'⬇ 导出', navLayout:'布局', navStyle:'样式', navExport:'导出',
+    popCellClear:'🗑 清空此格', popDelGroup:'🗑 删除整组', popCutout:'🪄 抠图',
+    cutTol:'容差', cutTransparent:'透明', cutWhite:'白底', cutApply:'✔ 应用抠图',
+    cutTip:'自动去掉四周接近纯色的背景（适合白墙/纯色底），拖容差调整强度，点图可重选背景色',
+    mImport:'＋ 图片', mExport:'⬇ 导出', navLayout:'布局', navStyle:'样式', navExport:'导出',
   },
   en: {
     appName:'Collage', import:'＋ Import Photos', mode:'Mode', modeTemplate:'Grid', modeFree:'Free', modeStrip:'Stitch',
@@ -409,8 +438,10 @@ const I18N = {
     libTitle:'Photos (drag to canvas)', libEmpty:'No photos yet — click "Import Photos" or drag images in',
     captPh:'Cell caption (optional)', freeTplTitle:'Add Layout Group (scales as one)',
     freeTplTip:'Click a layout to add it as one group; drag/scale it as a whole, and drag photos from the library into its cells',
-    popCellClear:'🗑 Clear Cell', popDelGroup:'🗑 Delete Group',
-    mExport:'⬇ Export', navLayout:'Layout', navStyle:'Style', navExport:'Export',
+    popCellClear:'🗑 Clear Cell', popDelGroup:'🗑 Delete Group', popCutout:'🪄 Cutout',
+    cutTol:'Tolerance', cutTransparent:'Transparent', cutWhite:'White BG', cutApply:'✔ Apply Cutout',
+    cutTip:'Removes near-solid background from the edges (best for white walls / solid backdrops). Drag tolerance to tune; tap the image to re-pick the background color',
+    mImport:'＋ Photo', mExport:'⬇ Export', navLayout:'Layout', navStyle:'Style', navExport:'Export',
   },
 };
 function t(k) { const v = I18N[lang][k]; return v !== undefined ? v : I18N.zh[k]; }
@@ -586,7 +617,8 @@ function clampCell(cell, shape, img) {
   const [,,w,h] = shape.bbox;
   const cr = cropOf(cell, img);
   const s = Math.max(w/cr.sw, h/cr.sh) * cell.zoom;
-  const mx = (cr.sw*s - w)/2, my = (cr.sh*s - h)/2;
+  // 用绝对值：图片大于格子时可平移；小于格子时可在格内移动、四周露背景
+  const mx = Math.abs(cr.sw*s - w)/2, my = Math.abs(cr.sh*s - h)/2;
   cell.ox = Math.max(-mx, Math.min(mx, cell.ox));
   cell.oy = Math.max(-my, Math.min(my, cell.oy));
 }
@@ -1071,8 +1103,10 @@ document.getElementById('pageDel').onclick = () => {
 
 // ---------- 照片导入 ----------
 document.getElementById('uploadBtn').onclick = () => document.getElementById('fileInput').click();
+let pendingCell = -1;   // 点空格子＋导入时，指定要填入的格子
 document.getElementById('fileInput').onchange = e => {
-  addFiles(e.target.files);
+  addFiles(e.target.files, pendingCell >= 0 ? pendingCell : null);
+  pendingCell = -1;
   e.target.value = '';
 };
 function addFiles(files, targetCell) {
@@ -1465,8 +1499,16 @@ canvas.addEventListener('pointerup', e => {
     const i = selCell;
     showPop(e.clientX, e.clientY, [
       [t('popCrop'), () => openCellCrop(i)],
+      [t('popCutout'), () => openCellCut(i)],
       [t('popRemove'), () => { cells[i] = { p:null, zoom:1, ox:0, oy:0, crop:null }; selCell = -1; updateSidebar(); render(); }],
     ]);
+  } else if (mode === 'template' && selCell >= 0 && cells[selCell] && cells[selCell].p == null) {
+    // 点空格子的＋：优先用图片库里第一张未用的图，否则打开相册导入到该格
+    const i = selCell;
+    const usedIds = new Set(cells.filter(c => c.p != null).map(c => c.p));
+    const free = photos.find(p => !usedIds.has(p.id));
+    if (free) { cells[i] = { p: free.id, zoom:1, ox:0, oy:0, crop:null, text:null }; updateSidebar(); render(); }
+    else { pendingCell = i; document.getElementById('fileInput').click(); }
   } else if (mode === 'free' && selFree >= 0) {
     const i = selFree, it = freeItems[i];
     if (it.type === 'group') {
@@ -1474,6 +1516,7 @@ canvas.addEventListener('pointerup', e => {
       const btns = [];
       if (k >= 0 && it.sub[k] && it.sub[k].p != null) {
         btns.push([t('popCrop'), () => openGroupCrop(i, k)]);
+        btns.push([t('popCutout'), () => openGroupCut(i, k)]);
         btns.push([t('popCellClear'), () => { it.sub[k] = { p:null, crop:null, text:null }; render(); }]);
       }
       btns.push([t('popDelGroup'), () => { freeItems.splice(i, 1); selFree = -1; updateSidebar(); render(); }]);
@@ -1481,6 +1524,7 @@ canvas.addEventListener('pointerup', e => {
     } else {
       showPop(e.clientX, e.clientY, [
         [t('popCrop'), () => openFreeCrop(i)],
+        [t('popCutout'), () => openFreeCut(i)],
         [t('popDelete'), () => { freeItems.splice(i, 1); selFree = -1; updateSidebar(); render(); }],
       ]);
     }
@@ -1488,6 +1532,7 @@ canvas.addEventListener('pointerup', e => {
     const i = selStrip;
     showPop(e.clientX, e.clientY, [
       [t('popCrop'), () => openStripCrop(i)],
+      [t('popCutout'), () => openStripCut(i)],
       [t('popUp'), () => {
         if (i > 0) { [stripOrder[i-1], stripOrder[i]] = [stripOrder[i], stripOrder[i-1]]; selStrip = i-1; renderTray(); render(); }
       }],
@@ -1505,7 +1550,7 @@ canvas.addEventListener('wheel', e => {
     const i = rects.findIndex(r => pointInShape(r, pt));
     if (i >= 0 && cells[i].p != null) {
       e.preventDefault();
-      cells[i].zoom = Math.max(1, Math.min(3, cells[i].zoom * (e.deltaY < 0 ? 1.06 : 0.94)));
+      cells[i].zoom = Math.max(0.2, Math.min(3, cells[i].zoom * (e.deltaY < 0 ? 1.06 : 0.94)));
       if (selCell === i) updateSidebar();
       render();
     }
@@ -1525,6 +1570,116 @@ canvas.addEventListener('dblclick', e => {
 });
 
 // ---------- 裁剪弹窗 ----------
+// ---------- 抠图（简单去色：从边缘泛洪去掉接近纯色的背景） ----------
+function cutoutDataURL(img, tol, toWhite, seed, maxDim) {
+  const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+  const w = Math.max(1, Math.round(img.width*scale)), h = Math.max(1, Math.round(img.height*scale));
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const c = cv.getContext('2d'); c.drawImage(img, 0, 0, w, h);
+  const id = c.getImageData(0, 0, w, h), d = id.data;
+  let R, G, B;
+  if (seed) { R = seed.r; G = seed.g; B = seed.b; }
+  else { // 取四角平均作为背景色
+    let r=0,g=0,b=0; const cs=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]];
+    cs.forEach(([x,y]) => { const p=(y*w+x)*4; r+=d[p]; g+=d[p+1]; b+=d[p+2]; });
+    R=r/4; G=g/4; B=b/4;
+  }
+  const tol2 = tol*tol;
+  const isBg = i => { const p=i*4, dr=d[p]-R, dg=d[p+1]-G, db=d[p+2]-B; return dr*dr+dg*dg+db*db < tol2; };
+  const visited = new Uint8Array(w*h), stack = [];
+  for (let x=0;x<w;x++){ stack.push(x); stack.push((h-1)*w+x); }
+  for (let y=0;y<h;y++){ stack.push(y*w); stack.push(y*w+(w-1)); }
+  while (stack.length) {
+    const idx = stack.pop(); if (visited[idx]) continue; visited[idx] = 1;
+    if (!isBg(idx)) continue;
+    const x = idx%w, y = (idx/w)|0;
+    if (x>0) stack.push(idx-1); if (x<w-1) stack.push(idx+1);
+    if (y>0) stack.push(idx-w); if (y<h-1) stack.push(idx+w);
+  }
+  for (let i=0;i<w*h;i++) if (visited[i] && isBg(i)) {
+    const p = i*4;
+    if (toWhite) { d[p]=255; d[p+1]=255; d[p+2]=255; d[p+3]=255; }
+    else d[p+3] = 0;
+  }
+  c.putImageData(id, 0, 0);
+  return cv.toDataURL('image/png');
+}
+// 把处理后的图作为新图片加入图片库并回调新 id
+function addProcessedPhoto(dataURL, cb) {
+  const img = new Image();
+  img.onload = () => { const p = { id: nextId++, img, url: dataURL }; photos.push(p); renderLibrary(); cb(p.id); };
+  img.src = dataURL;
+}
+const cutModal = document.getElementById('cutModal');
+const cutCanvas = document.getElementById('cutCanvas');
+const cutx = cutCanvas.getContext('2d');
+let cutState = null;  // {img, onApply, seed}
+function cutPreview() {
+  if (!cutState) return;
+  const img = cutState.img, tol = +document.getElementById('cutTol').value;
+  const toWhite = document.querySelector('#cutOutSel button.active').dataset.out === 'white';
+  const maxDim = 700;
+  const scale = Math.min(1, maxDim/Math.max(img.width,img.height));
+  const w = Math.max(1,Math.round(img.width*scale)), h = Math.max(1,Math.round(img.height*scale));
+  cutCanvas.width = w; cutCanvas.height = h;
+  const url = cutoutDataURL(img, tol, toWhite, cutState.seed, maxDim);
+  const im = new Image();
+  im.onload = () => { cutx.clearRect(0,0,w,h); cutx.drawImage(im,0,0,w,h); };
+  im.src = url;
+}
+function openCutout(img, onApply) {
+  cutState = { img, onApply, seed: null };
+  const maxW = Math.min(innerWidth*0.82, 900), maxH = innerHeight*0.6;
+  const s = Math.min(maxW/img.width, maxH/img.height);
+  cutCanvas.style.width = Math.round(img.width*s) + 'px';
+  cutCanvas.style.height = Math.round(img.height*s) + 'px';
+  cutModal.classList.add('show');
+  cutPreview();
+}
+document.getElementById('cutTol').oninput = cutPreview;
+document.querySelectorAll('#cutOutSel button').forEach(b => {
+  b.onclick = () => { document.querySelectorAll('#cutOutSel button').forEach(e=>e.classList.toggle('active',e===b)); cutPreview(); };
+});
+cutCanvas.addEventListener('pointerdown', e => {   // 点图重选背景色
+  if (!cutState) return;
+  const b = cutCanvas.getBoundingClientRect();
+  const x = Math.round((e.clientX-b.left)*cutCanvas.width/b.width);
+  const y = Math.round((e.clientY-b.top)*cutCanvas.height/b.height);
+  const tmp = document.createElement('canvas'); tmp.width=cutCanvas.width; tmp.height=cutCanvas.height;
+  const tc = tmp.getContext('2d'); const sc=Math.min(1,700/Math.max(cutState.img.width,cutState.img.height));
+  tc.drawImage(cutState.img,0,0,cutCanvas.width,cutCanvas.height);
+  const px = tc.getImageData(Math.max(0,Math.min(cutCanvas.width-1,x)), Math.max(0,Math.min(cutCanvas.height-1,y)),1,1).data;
+  cutState.seed = { r:px[0], g:px[1], b:px[2] };
+  cutPreview();
+});
+document.getElementById('cutCancel').onclick = () => { cutModal.classList.remove('show'); cutState = null; };
+document.getElementById('cutOk').onclick = () => {
+  if (!cutState) return;
+  const tol = +document.getElementById('cutTol').value;
+  const toWhite = document.querySelector('#cutOutSel button.active').dataset.out === 'white';
+  const url = cutoutDataURL(cutState.img, tol, toWhite, cutState.seed, 2200);
+  const fn = cutState.onApply;
+  cutModal.classList.remove('show'); cutState = null;
+  fn(url);
+};
+function openCellCut(i) {
+  const ph = photoById(cells[i].p); if (!ph) return;
+  openCutout(ph.img, url => addProcessedPhoto(url, id => { cells[i] = { p:id, zoom:1, ox:0, oy:0, crop:null, text:cells[i].text }; render(); }));
+}
+function openFreeCut(i) {
+  const it = freeItems[i], ph = it && photoById(it.p); if (!ph) return;
+  openCutout(ph.img, url => addProcessedPhoto(url, id => { it.p = id; it.crop = null; render(); }));
+}
+function openStripCut(i) {
+  const id = stripOrder[i], ph = photoById(id); if (!ph) return;
+  openCutout(ph.img, url => addProcessedPhoto(url, nid => { delete stripCrops[id]; stripOrder[i] = nid; render(); }));
+}
+function openGroupCut(gi, k) {
+  const it = freeItems[gi]; if (!it || it.type !== 'group') return;
+  const sc = it.sub[k], ph = sc && photoById(sc.p); if (!ph) return;
+  openCutout(ph.img, url => addProcessedPhoto(url, id => { sc.p = id; sc.crop = null; render(); }));
+}
+
 const cropModal = document.getElementById('cropModal');
 const cropCanvas = document.getElementById('cropCanvas');
 const cctx = cropCanvas.getContext('2d');
@@ -1694,6 +1849,7 @@ window.addEventListener('keydown', e => {
     freeItems.splice(selFree, 1); selFree = -1; updateSidebar(); render();
   }
   if (e.key === 'Escape' && cm) { cropModal.classList.remove('show'); cm = null; }
+  if (e.key === 'Escape' && cutState) { cutModal.classList.remove('show'); cutState = null; }
 });
 
 // ---------- 导出 ----------
@@ -1772,6 +1928,7 @@ document.querySelectorAll('#mNav button').forEach(b => {
   b.onclick = () => { mPanel = b.dataset.mpanel; applyMobilePanel(); };
 });
 document.getElementById('mExport').onclick = () => document.getElementById('exportBtn').click();
+document.getElementById('mImport').onclick = () => document.getElementById('fileInput').click();
 window.addEventListener('resize', applyMobilePanel);
 
 // ---------- 初始化 ----------
