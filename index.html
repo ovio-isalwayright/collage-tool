@@ -116,11 +116,12 @@
   .btn.danger:hover { background:#fdecec; }
   .subh { font-size:12px; color:var(--text); font-weight:600; margin-bottom:8px; }
   .custom-tpl { display:flex; align-items:center; gap:8px; margin-top:12px; font-size:12px; color:var(--muted); }
-  .custom-tpl input[type=number] { width:56px; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:7px 8px; font-size:13px; text-align:center; }
-  .custom-tpl input[type=number]:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .custom-tpl input { width:56px; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:7px 8px; font-size:13px; text-align:center; }
+  .custom-tpl input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
   .custom-tpl .btn { width:auto; flex:1; margin:0; padding:8px 0; font-size:13px; }
   .custom-tpl .ctl { flex-shrink:0; }
   .custom-tpl + .custom-tpl { margin-top:8px; }
+  .custom-tpl input.spec { flex:1; min-width:0; width:auto; text-align:left; }
   ::-webkit-scrollbar { width:9px; height:9px; }
   ::-webkit-scrollbar-thumb { background:#d2d7e0; border-radius:5px; border:2px solid var(--panel); }
   ::-webkit-scrollbar-thumb:hover { background:#bcc3d0; }
@@ -137,33 +138,35 @@
     .m-only { display:inline-flex; align-items:center; justify-content:center; }
     #mExport { border:none; background:var(--accent); color:#fff; font-weight:700; font-size:13px; padding:8px 16px; border-radius:20px; cursor:pointer; box-shadow:0 2px 8px rgba(79,124,255,.35); }
     .main { flex-direction:column; min-height:0; }
-    .stage { order:1; flex:1 1 0; min-height:150px; padding:12px; }
+    .stage { order:1; flex:1 1 auto; min-height:38vh; padding:10px; }
     #canvas { border-radius:6px; }
     /* 图片库：横向缩略图条，仅“布局”标签显示 */
-    .library { order:2; width:auto; border-left:none; border-top:1px solid var(--border); padding:8px 12px; flex:0 0 auto; }
+    .library { order:2; width:auto; border-left:none; border-top:1px solid var(--border); padding:6px 12px; flex:0 0 auto; }
     .library h3 { display:none; }
-    .libgrid { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
-    .libthumb { width:56px; height:56px; aspect-ratio:auto; flex-shrink:0; }
+    .libgrid { display:flex; gap:7px; overflow-x:auto; padding-bottom:2px; }
+    .libthumb { width:48px; height:48px; aspect-ratio:auto; flex-shrink:0; }
     /* 下方控制面板 */
-    .sidebar { order:3; width:100%; border-right:none; border-top:1px solid var(--border); flex:0 0 auto; max-height:40vh; padding:12px 14px; }
-    .sidebar .sec { margin-bottom:14px; }
+    .sidebar { order:3; width:100%; border-right:none; border-top:1px solid var(--border); flex:0 0 auto; max-height:32vh; padding:10px 14px; }
+    .sidebar .sec { margin-bottom:11px; }
+    .sidebar .sec h3, .sidebar .subh { margin-bottom:6px; }
     #secImport { display:none; }            /* 手机端用顶部/模式区导入即可，节省空间 */
     /* 模板、模版组缩略图：单行横向滑动 */
     .tpls, #secFreeTpl .tpls { display:flex; overflow-x:auto; gap:8px; padding-bottom:2px; }
     .tpls .tpl { width:60px; flex-shrink:0; }
     /* 画布比例做成横向 chips（把 select 也放大好点） */
     #aspectSel { width:100%; }
-    .btn, .tabs button, select, #pop button { min-height:44px; }
-    .tabs button { font-size:14px; }
+    .btn, .tabs button, select, #pop button { min-height:40px; }
+    .tabs button { font-size:14px; padding:7px 0; }
+    .sidebar .btn { padding:9px 0; margin-bottom:7px; }
     .tray { display:none !important; }       /* 长图排序用画布拖拽即可 */
     .rz[data-dir="r"] { width:14px; height:48px; margin-top:-24px; right:-9px; }
     .rz[data-dir="b"] { height:14px; width:48px; margin-left:-24px; bottom:-9px; }
     .rz[data-dir="rb"] { width:22px; height:22px; right:-11px; bottom:-11px; }
     /* 底部标签栏 */
-    #mNav { display:flex; flex:0 0 auto; border-top:1px solid var(--border); background:var(--panel); }
-    #mNav button { flex:1; border:none; background:transparent; padding:8px 0 10px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); }
-    #mNav button span { font-size:18px; line-height:1; }
-    #mNav button em { font-style:normal; font-size:11px; font-weight:600; }
+    #mNav { display:flex; flex:0 0 auto; border-top:1px solid var(--border); background:var(--panel); padding-bottom:env(safe-area-inset-bottom); }
+    #mNav button { flex:1; border:none; background:transparent; padding:6px 0 7px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--muted); }
+    #mNav button span { font-size:16px; line-height:1; }
+    #mNav button em { font-style:normal; font-size:10px; font-weight:600; }
     #mNav button.active { color:var(--accent); }
   }
   @media (max-width: 480px) {
@@ -204,17 +207,10 @@
       <div class="tpls" id="tplList"></div>
       <div class="subh" style="margin-top:14px" data-i18n="customTplLabel">自定义模版</div>
       <div class="custom-tpl">
-        <span class="ctl" data-i18n="customCountLabel">张数</span>
-        <input type="number" id="customN" min="1" max="20" value="4" aria-label="count">
-        <button class="btn ghost" id="genCountBtn" data-i18n="genTpl">生成</button>
+        <input type="text" id="customSpec" class="spec" value="3,4,4,3" aria-label="custom layout">
+        <button class="btn ghost" id="genCustomBtn" data-i18n="genTpl">生成</button>
       </div>
-      <div class="custom-tpl">
-        <span class="ctl" data-i18n="customGridLabel">行列</span>
-        <input type="number" id="customRows" min="1" max="8" value="3" aria-label="rows">
-        <span>×</span>
-        <input type="number" id="customCols" min="1" max="8" value="3" aria-label="cols">
-        <button class="btn ghost" id="genTplBtn" data-i18n="genTpl">生成</button>
-      </div>
+      <p class="tip" data-i18n="customHint">填张数(9)、行×列(3x3) 或每行分布(3,4,4,3) 都行，点生成</p>
     </div>
     <div class="sec" id="secAspect">
       <h3 data-i18n="aspectTitle">画布比例（可拖画布边角自由拉伸）</h3>
@@ -358,7 +354,7 @@ let lang = 'zh';
 const I18N = {
   zh: {
     appName:'拼图工具', import:'＋ 导入照片', mode:'模式', modeTemplate:'模板', modeFree:'自由', modeStrip:'长图',
-    chooseTpl:'选择模板', customTplLabel:'自定义模版', customCountLabel:'张数', customGridLabel:'行列', genTpl:'生成', aspectTitle:'画布比例（可拖画布边角自由拉伸）',
+    chooseTpl:'选择模板', customTplLabel:'自定义模版', customHint:'填张数(9)、行×列(3x3) 或每行分布(3,4,4,3) 都行，点生成', genTpl:'生成', aspectTitle:'画布比例（可拖画布边角自由拉伸）',
     ar11:'1 : 1 正方形', ar43:'4 : 3 横向', ar34:'3 : 4 竖向', ar169:'16 : 9 宽屏', ar916:'9 : 16 手机屏',
     fitOriginal:'📐 适配原图尺寸',
     pagesTitle:'画布页（左右拼接）', pageL:'＋左加页', pageR:'＋右加页', pageDel:'－减页',
@@ -388,7 +384,7 @@ const I18N = {
   },
   en: {
     appName:'Collage', import:'＋ Import Photos', mode:'Mode', modeTemplate:'Grid', modeFree:'Free', modeStrip:'Stitch',
-    chooseTpl:'Choose Layout', customTplLabel:'Custom layout', customCountLabel:'Count', customGridLabel:'Grid', genTpl:'Generate', aspectTitle:'Canvas Ratio (drag corners to resize)',
+    chooseTpl:'Choose Layout', customTplLabel:'Custom layout', customHint:'Enter a count (9), rows×cols (3x3), or per-row (3,4,4,3), then Generate', genTpl:'Generate', aspectTitle:'Canvas Ratio (drag corners to resize)',
     ar11:'1 : 1 Square', ar43:'4 : 3 Landscape', ar34:'3 : 4 Portrait', ar169:'16 : 9 Wide', ar916:'9 : 16 Phone',
     fitOriginal:'📐 Fit to Original Size',
     pagesTitle:'Canvas Pages (join L–R)', pageL:'＋ Add Left', pageR:'＋ Add Right', pageDel:'－ Remove',
@@ -847,27 +843,42 @@ function addGroup(tplIdx) {
   updateSidebar(); render();
 }
 // ---------- 自定义模版：按张数生成最匀称的网格 ----------
+// 按“每行各放几个”的数组生成布局，如 [3,4,4,3]
+function genPerRow(list) {
+  list = list.map(x => Math.max(1, Math.min(12, Math.round(x)))).filter(x => x > 0).slice(0, 12);
+  if (!list.length) return null;
+  const rows = list.length, rh = 1/rows, out = [];
+  for (let r = 0; r < rows; r++) { const cw = 1/list[r]; for (let c = 0; c < list[r]; c++) out.push([c*cw, r*rh, cw, rh]); }
+  return out;
+}
 // 固定行×列网格
 function genRowsCols(rows, cols) {
   rows = Math.max(1, Math.min(8, Math.round(rows)));
   cols = Math.max(1, Math.min(8, Math.round(cols)));
-  const rh = 1/rows, cw = 1/cols, out = [];
-  for (let r = 0; r < rows; r++)
-    for (let c = 0; c < cols; c++) out.push([c*cw, r*rh, cw, rh]);
-  return out;
+  return genPerRow(Array(rows).fill(cols));
 }
-// 按张数自动排最匀称的网格
-function genGrid(n) {
-  n = Math.max(1, Math.min(20, Math.round(n)));
+// 按张数自动排最匀称的分布，如 14 -> [4,4,3,3]
+function genDist(n) {
+  n = Math.max(1, Math.min(24, Math.round(n)));
   const rows = Math.max(1, Math.round(Math.sqrt(n)));
   const base = Math.floor(n / rows), rem = n % rows;
-  const rh = 1 / rows, out = [];
-  for (let r = 0; r < rows; r++) {
-    const cols = base + (r < rem ? 1 : 0);
-    const cw = 1 / cols;
-    for (let c = 0; c < cols; c++) out.push([c*cw, r*rh, cw, rh]);
+  return Array.from({ length: rows }, (_, r) => base + (r < rem ? 1 : 0));
+}
+// 智能解析输入：行×列(3x3) / 每行分布(3,4,4,3) / 张数(9)
+function parseCustomSpec(s) {
+  s = (s || '').trim();
+  if (!s) return null;
+  if (/[×xX*]/.test(s)) {                       // 行 × 列
+    const m = s.split(/[×xX*]/).map(x => parseInt(x, 10));
+    if (m.length === 2 && m[0] > 0 && m[1] > 0) return genRowsCols(m[0], m[1]);
   }
-  return out;
+  if (/[,，、\s]/.test(s)) {                      // 每行分布
+    const list = s.split(/[,，、\s]+/).map(x => parseInt(x, 10)).filter(x => x > 0);
+    if (list.length) return genPerRow(list);
+  }
+  const n = parseInt(s, 10);                     // 张数
+  if (n > 0) return genPerRow(genDist(n));
+  return null;
 }
 let customTplIndex = -1, customThumb = null;
 function generateCustomTemplate(layout) {
@@ -973,15 +984,14 @@ document.querySelectorAll('#bgTypeTabs button').forEach(b => {
   };
 });
 document.getElementById('aspectSel').onchange = e => { aspect = e.target.value; customSize = null; render(); };
-document.getElementById('genTplBtn').onclick = () => {
-  const rows = parseInt(document.getElementById('customRows').value, 10) || 1;
-  const cols = parseInt(document.getElementById('customCols').value, 10) || 1;
-  generateCustomTemplate(genRowsCols(rows, cols));
-};
-document.getElementById('genCountBtn').onclick = () => {
-  const n = parseInt(document.getElementById('customN').value, 10) || 1;
-  generateCustomTemplate(genGrid(n));
-};
+function runCustomGen() {
+  const inp = document.getElementById('customSpec');
+  const layout = parseCustomSpec(inp.value);
+  if (layout) generateCustomTemplate(layout);
+  else inp.focus();
+}
+document.getElementById('genCustomBtn').onclick = runCustomGen;
+document.getElementById('customSpec').addEventListener('keydown', e => { if (e.key === 'Enter') runCustomGen(); });
 // 单元格在模版中所占的宽高比例（异形取包围盒）
 function cellFraction(f) {
   if (!isPolyCell(f)) return [f[2], f[3]];
