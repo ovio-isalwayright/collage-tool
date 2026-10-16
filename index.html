@@ -290,6 +290,7 @@
         <button data-sm="count" class="active" data-i18n="smCount">按张数</button>
         <button data-sm="ratio" data-i18n="smRatio">按比例</button>
         <button data-sm="grid" data-i18n="smGrid">宫格</button>
+        <button data-sm="region" data-i18n="smRegion">框选</button>
       </div>
       <div class="split-opts">
         <label class="row" id="smCountRow"><span data-i18n="splitCount">张数</span>
@@ -318,11 +319,26 @@
           <button data-sdir="v" class="active" data-i18n="splitDirV">↓ 上下切</button>
           <button data-sdir="h" data-i18n="splitDirH">→ 左右切</button>
         </div>
+        <label class="row" id="smRegionRow"><span data-i18n="regionRatio">选框比例</span>
+          <select id="regionRatioSel">
+            <option value="free" data-i18n="ratioFree">自由</option>
+            <option value="1:1" data-i18n="ratio11">1:1 方形</option>
+            <option value="3:4" data-i18n="ratio34">3:4 小红书</option>
+            <option value="4:5" data-i18n="ratio45">4:5 Instagram</option>
+            <option value="9:16" data-i18n="ratio916">9:16 全屏</option>
+            <option value="4:3">4:3</option>
+            <option value="16:9">16:9</option>
+          </select>
+        </label>
         <label class="row split-smart"><span data-i18n="splitSmart">智能避开文字（切在空白处）</span> <input type="checkbox" id="splitSmart" checked></label>
-        <button class="btn ghost" id="splitResetBtn" data-i18n="splitEven">重置分割线</button>
+        <div class="btnrow">
+          <button class="btn ghost" id="splitResetBtn" data-i18n="splitEven">重置分割线</button>
+          <button class="btn ghost hidden" id="regionAllBtn" data-i18n="regionAll">框选全图</button>
+          <button class="btn ghost hidden" id="splitClearSel" data-i18n="splitClearSel">取消选择</button>
+        </div>
       </div>
       <p class="split-info" id="splitInfo"></p>
-      <p class="tip" data-i18n="splitTip">编号就是保存/发布顺序。按比例切时，最后一张是剩下的部分</p>
+      <p class="tip" id="splitTip"></p>
     </div>
     <div class="sec" id="secStyle">
       <h3 data-i18n="styleTitle">样式调节</h3>
@@ -481,7 +497,11 @@ const I18N = {
     splitHowTitle:'切割方式', smCount:'按张数', smRatio:'按比例', smGrid:'宫格',
     splitCount:'张数', splitPieceRatio:'每张比例', splitRows:'行', splitCols:'列',
     splitDirV:'↓ 上下切', splitDirH:'→ 左右切', splitSmart:'智能避开文字（切在空白处）', splitEven:'重置分割线',
-    splitTip:'编号就是保存/发布顺序。按比例切时，最后一张是剩下的部分',
+    splitTip:'点画布上的块可以只选部分导出（再点取消）。编号就是保存/发布顺序',
+    smRegion:'框选', regionRatio:'选框比例', ratioFree:'自由', regionAll:'框选全图', regionReset:'重置选框',
+    regionTip:'拖动选框移动，拖四个角调整大小，拖框外空白处滚动长图。导出只保存框里的部分',
+    regionInfo:(w,h)=>`选区 ${w} × ${h} px`, regionDl:'⬇ 导出选区',
+    splitClearSel:'取消选择', splitSelInfo:(k,n)=>`已选 ${k} / ${n} 张 · 只导出选中的`, splitDlSel:k=>`⬇ 下载选中 (${k})`,
     splitInfo:(n, sz) => `共 ${n} 张 · ${sz}`, splitSizeEach:(w,h)=>`每张 ${w} × ${h} px`, splitSizeVar:'尺寸略有不同',
     splitDl:'⬇ 下载全部 (ZIP)', splitDl1:'⬇ 下载', splitLib:'＋ 存入图片库', splitSaved:n=>`已存入图片库 ${n} 张`,
     ratio11:'1:1 方形', ratio34:'3:4 小红书', ratio45:'4:5 Instagram', ratio23:'2:3', ratio916:'9:16 全屏',
@@ -522,7 +542,11 @@ const I18N = {
     splitHowTitle:'Split By', smCount:'Count', smRatio:'Ratio', smGrid:'Grid',
     splitCount:'Pieces', splitPieceRatio:'Piece ratio', splitRows:'Rows', splitCols:'Cols',
     splitDirV:'↓ Top–Bottom', splitDirH:'→ Left–Right', splitSmart:'Avoid cutting text (cut in gaps)', splitEven:'Reset Lines',
-    splitTip:'Numbers are the save/posting order. In Ratio mode the last piece is whatever is left',
+    splitTip:'Tap pieces on the canvas to export only those (tap again to unselect). Numbers are the save/posting order',
+    smRegion:'Select', regionRatio:'Box ratio', ratioFree:'Free', regionAll:'Select All', regionReset:'Reset Box',
+    regionTip:'Drag the box to move it, drag its corners to resize, drag outside it to scroll. Export saves only what is inside the box',
+    regionInfo:(w,h)=>`Selection ${w} × ${h} px`, regionDl:'⬇ Export Selection',
+    splitClearSel:'Clear Selection', splitSelInfo:(k,n)=>`${k} of ${n} selected · only these will be exported`, splitDlSel:k=>`⬇ Download Selected (${k})`,
     splitInfo:(n, sz) => `${n} piece${n>1?'s':''} · ${sz}`, splitSizeEach:(w,h)=>`${w} × ${h} px each`, splitSizeVar:'sizes vary slightly',
     splitDl:'⬇ Download All (ZIP)', splitDl1:'⬇ Download', splitLib:'＋ Save to Library', splitSaved:n=>`Saved ${n} piece${n>1?'s':''} to library`,
     ratio11:'1:1 Square', ratio34:'3:4 Portrait', ratio45:'4:5 Instagram', ratio23:'2:3', ratio916:'9:16 Full screen',
@@ -894,8 +918,8 @@ function fitCanvas() {
   if (mode === 'split' && splitSrc != null) {
     // 长图不要缩成细条：保证可读宽度/高度，超出部分在舞台内滚动
     const minW = Math.min(availW, 420), minH = Math.min(availH, 280);
-    if (canvas.width * s < minW) s = minW / canvas.width;
-    if (canvas.height * s < minH) s = minH / canvas.height;
+    if (canvas.height > canvas.width * 1.5 && canvas.width * s < minW) s = minW / canvas.width;   // 竖长图
+    if (canvas.width > canvas.height * 2 && canvas.height * s < minH) s = minH / canvas.height;   // 横长图
   }
   canvas.style.width = Math.round(canvas.width * s) + 'px';
   canvas.style.height = Math.round(canvas.height * s) + 'px';
@@ -1064,7 +1088,10 @@ function updateSidebar() {
   document.querySelector('#mNav [data-mpanel="style"]').classList.toggle('hidden', mode === 'split');
   if (mode === 'split') {
     const pieces = (splitXs.length - 1) * (splitYs.length - 1);
-    document.getElementById('exportBtn').textContent = pieces > 1 ? t('splitDl') : t('splitDl1');
+    document.getElementById('exportBtn').textContent =
+      splitMethod === 'region' ? t('regionDl')
+      : splitSel.size ? (splitSel.size > 1 ? t('splitDlSel')(splitSel.size) : t('splitDl1'))
+      : pieces > 1 ? t('splitDl') : t('splitDl1');
     updateSplitPanel();
   } else {
     document.getElementById('exportBtn').textContent = t('exportBtn');
@@ -1485,9 +1512,10 @@ canvas.addEventListener('pointerdown', e => {
   downClient = { x: e.clientX, y: e.clientY };
   canvas.setPointerCapture(e.pointerId);
   if (mode === 'split') {
-    // 命中分割线 → 拖线；否则拖空白处滚动长图
-    drag = splitHit(pt, canvas.width / canvas.getBoundingClientRect().width)
-      || { type:'splitpan', x:e.clientX, y:e.clientY, sl:stage.scrollLeft, st:stage.scrollTop };
+    // 框选：命中选框角/框内 → 调整/移动；分割：命中分割线 → 拖线；否则拖空白处滚动长图（轻点则选块）
+    const k = canvas.width / canvas.getBoundingClientRect().width;
+    drag = (splitMethod === 'region' ? regionHit(pt, k) : splitHit(pt, k))
+      || { type:'splitpan', x:e.clientX, y:e.clientY, sl:stage.scrollLeft, st:stage.scrollTop, pt };
     return;
   }
   if (mode === 'template') {
@@ -1600,7 +1628,12 @@ canvas.addEventListener('pointermove', e => {
 canvas.addEventListener('pointerup', e => {
   const d = drag;
   drag = null;
-  if (mode === 'split') { downClient = null; return; }
+  if (mode === 'split') {
+    const tap = downClient && Math.hypot(e.clientX - downClient.x, e.clientY - downClient.y) <= 6;
+    downClient = null;
+    if (tap && d && d.type === 'splitpan' && splitMethod !== 'region') toggleSplitPiece(d.pt);
+    return;
+  }
   // 拖到别的格子 → 交换两格内容（拖到空格即移过去）
   if (d && d.type === 'pan' && swapTarget >= 0 && swapTarget !== d.i) {
     const tmp = cells[d.i]; cells[d.i] = cells[swapTarget]; cells[swapTarget] = tmp;
@@ -1959,6 +1992,8 @@ let splitCount = 3, splitRows = 3, splitCols = 3, splitRatio = '3:4';
 let splitXs = [0, 1], splitYs = [0, 1];     // 分割线位置（0~1 比例）
 let splitProf = null;                       // 智能切割用的行/列“起伏度”缓存
 let splitFlash = '', splitFlashTimer = 0;
+let splitSel = new Set();                   // 选中的块（按编号下标）；为空 = 全部导出
+let splitRegion = null, regionRatio = 'free';   // 框选区域 {x,y,w,h}（0~1 比例）与锁定比例
 function evenCuts(n) { return Array.from({ length: n + 1 }, (_, i) => i / n); }
 function clampInt(v, lo, hi) { return Math.max(lo, Math.min(hi, Math.round(+v) || lo)); }
 function splitSource() {
@@ -1975,7 +2010,7 @@ function splitPreviewSize() {
   return [Math.max(1, Math.round(sw * k)), Math.max(1, Math.round(sh * k))];
 }
 function setSplitSource(id, crop) {
-  splitSrc = id; splitCrop = crop || null; splitProf = null;
+  splitSrc = id; splitCrop = crop || null; splitProf = null; splitRegion = null;
   const s = splitSource();
   if (s) {
     // 按图片形状给默认值：竖图上下切，横图左右切；长图默认每张约 3:4 / 1:1
@@ -2002,7 +2037,10 @@ function ratioCuts(len, piece) {
 function layoutSplit() {
   const s = splitSource();
   splitXs = [0, 1]; splitYs = [0, 1];
-  if (s) {
+  splitSel.clear();
+  if (s && splitMethod === 'region') {
+    if (!splitRegion) splitRegion = defaultRegion();
+  } else if (s) {
     const { sw, sh } = s.cr;
     if (splitMethod === 'grid') { splitYs = evenCuts(splitRows); splitXs = evenCuts(splitCols); }
     else if (splitMethod === 'count') { if (splitDir === 'v') splitYs = evenCuts(splitCount); else splitXs = evenCuts(splitCount); }
@@ -2090,6 +2128,17 @@ function renderSplitScene(c, W, H) {
   }
   c.drawImage(s.img, s.cr.sx, s.cr.sy, s.cr.sw, s.cr.sh, 0, 0, W, H);
   const k = W / Math.max(1, parseFloat(canvas.style.width) || W);   // 1 个屏幕像素对应的画布像素，保证线条粗细在屏幕上一致
+  if (splitMethod === 'region') { drawRegion(c, W, H, k); return; }
+  // 选了部分块：未选中的压暗，选中的描边
+  if (splitSel.size) {
+    const cols0 = splitXs.length - 1;
+    for (let r = 0; r < splitYs.length - 1; r++) for (let q = 0; q < cols0; q++) {
+      const x = splitXs[q]*W, y = splitYs[r]*H, w = (splitXs[q+1] - splitXs[q])*W, h = (splitYs[r+1] - splitYs[r])*H;
+      if (splitSel.has(r * cols0 + q)) {
+        c.strokeStyle = '#4f7cff'; c.lineWidth = 4*k; c.strokeRect(x + 2*k, y + 2*k, w - 4*k, h - 4*k);
+      } else { c.fillStyle = 'rgba(15,18,28,.55)'; c.fillRect(x, y, w, h); }
+    }
+  }
   const line = (x1, y1, x2, y2) => {
     c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2);
     c.strokeStyle = 'rgba(0,0,0,.45)'; c.lineWidth = 4*k; c.stroke();
@@ -2105,7 +2154,7 @@ function renderSplitScene(c, W, H) {
     const pw = (splitXs[q+1] - splitXs[q]) * W, ph = (splitYs[r+1] - splitYs[r]) * H;
     if (Math.min(pw, ph) < 30*k || rows * cols === 1) continue;
     const cx = splitXs[q]*W + 20*k, cy = splitYs[r]*H + 20*k;   // 编号放在每块左上角，不挡内容
-    c.fillStyle = 'rgba(20,24,35,.62)'; c.beginPath(); c.arc(cx, cy, 13*k, 0, 7); c.fill();
+    c.fillStyle = splitSel.has(r * cols + q) ? '#4f7cff' : 'rgba(20,24,35,.62)'; c.beginPath(); c.arc(cx, cy, 13*k, 0, 7); c.fill();
     c.fillStyle = '#fff'; c.fillText(String(r * cols + q + 1), cx, cy + k);
   }
   // 拖动手柄
@@ -2125,11 +2174,122 @@ function splitHit(pt, k) {
   for (let i = 1; i < splitYs.length - 1; i++) { const d = Math.abs(pt.y - splitYs[i]*H); if (d < bd) { bd = d; best = { type:'splitline', axis:'y', i }; } }
   return best;
 }
+// ---- 轻点选块 ----
+function toggleSplitPiece(pt) {
+  if (!splitSource()) return;
+  const fx = pt.x / canvas.width, fy = pt.y / canvas.height, cols = splitXs.length - 1;
+  if ((splitYs.length - 1) * cols <= 1) return;
+  const q = splitXs.findIndex((x, i) => i < cols && fx >= x && fx < splitXs[i+1]);
+  const r = splitYs.findIndex((y, i) => i < splitYs.length - 1 && fy >= y && fy < splitYs[i+1]);
+  if (q < 0 || r < 0) return;
+  const idx = r * cols + q;
+  if (splitSel.has(idx)) splitSel.delete(idx); else splitSel.add(idx);
+  updateSidebar(); render();
+}
+// ---- 框选 ----
+const CORNERS = ['nw', 'ne', 'sw', 'se'];
+// 默认选框：当前可视区域中间 70%，按锁定比例收缩
+function defaultRegion() {
+  const cb = canvas.getBoundingClientRect(), sb = stage.getBoundingClientRect();
+  let x0 = 0, x1 = 1, y0 = 0, y1 = 1;
+  if (mode === 'split' && cb.width && cb.height) {
+    x0 = Math.max(0, (sb.left - cb.left) / cb.width); x1 = Math.min(1, (sb.right - cb.left) / cb.width);
+    y0 = Math.max(0, (sb.top - cb.top) / cb.height); y1 = Math.min(1, (sb.bottom - cb.top) / cb.height);
+    if (x1 - x0 < 0.05) { x0 = 0; x1 = 1; }
+    if (y1 - y0 < 0.05) { y0 = 0; y1 = 1; }
+  }
+  const w = (x1 - x0) * 0.7, h = (y1 - y0) * 0.7;
+  return fitRegionRatio({ x: x0 + (x1 - x0) * 0.15, y: y0 + (y1 - y0) * 0.15, w, h });
+}
+function ratioNum() { if (regionRatio === 'free') return 0; const [a, b] = regionRatio.split(':').map(Number); return a / b; }
+// 按锁定比例（像素宽:高）收缩选框，保持中心不动
+function fitRegionRatio(r) {
+  const t0 = ratioNum(), s = splitSource();
+  if (!t0 || !s) return r;
+  const { sw, sh } = s.cr;
+  let wPx = r.w * sw, hPx = r.h * sh;
+  if (wPx / hPx > t0) wPx = hPx * t0; else hPx = wPx / t0;
+  const w = wPx / sw, h = hPx / sh, cx = r.x + r.w / 2, cy = r.y + r.h / 2;
+  return { x: Math.max(0, Math.min(1 - w, cx - w/2)), y: Math.max(0, Math.min(1 - h, cy - h/2)), w, h };
+}
+function regionPx() { const r = splitRegion; return { x: r.x*canvas.width, y: r.y*canvas.height, w: r.w*canvas.width, h: r.h*canvas.height }; }
+function regionCorner(R, k) {
+  return { nw:[R.x, R.y], ne:[R.x + R.w, R.y], sw:[R.x, R.y + R.h], se:[R.x + R.w, R.y + R.h] }[k];
+}
+function regionHit(pt, k) {
+  if (!splitSource() || !splitRegion) return null;
+  const R = regionPx();
+  for (const cn of CORNERS) {
+    const [x, y] = regionCorner(R, cn);
+    if (Math.hypot(pt.x - x, pt.y - y) < 18 * k) {
+      const opp = { nw:'se', ne:'sw', sw:'ne', se:'nw' }[cn];
+      return { type:'rresize', corner: cn, o: regionCorner(R, opp) };
+    }
+  }
+  if (pt.x >= R.x && pt.x <= R.x + R.w && pt.y >= R.y && pt.y <= R.y + R.h)
+    return { type:'rmove', dx: pt.x - R.x, dy: pt.y - R.y };
+  return null;
+}
+function drawRegion(c, W, H, k) {
+  if (!splitRegion) return;
+  const R = regionPx();
+  c.fillStyle = 'rgba(15,18,28,.55)';
+  c.fillRect(0, 0, W, R.y); c.fillRect(0, R.y + R.h, W, H - R.y - R.h);
+  c.fillRect(0, R.y, R.x, R.h); c.fillRect(R.x + R.w, R.y, W - R.x - R.w, R.h);
+  c.strokeStyle = '#4f7cff'; c.lineWidth = 2*k; c.strokeRect(R.x, R.y, R.w, R.h);
+  c.strokeStyle = 'rgba(255,255,255,.45)'; c.lineWidth = k;      // 三分线
+  for (let i = 1; i <= 2; i++) {
+    c.beginPath(); c.moveTo(R.x + R.w*i/3, R.y); c.lineTo(R.x + R.w*i/3, R.y + R.h); c.stroke();
+    c.beginPath(); c.moveTo(R.x, R.y + R.h*i/3); c.lineTo(R.x + R.w, R.y + R.h*i/3); c.stroke();
+  }
+  c.fillStyle = '#4f7cff'; c.strokeStyle = '#fff'; c.lineWidth = 2*k;
+  CORNERS.forEach(cn => { const [x, y] = regionCorner(R, cn); c.fillRect(x - 7*k, y - 7*k, 14*k, 14*k); c.strokeRect(x - 7*k, y - 7*k, 14*k, 14*k); });
+  // 尺寸标签
+  const e = regionEdges(), label = `${e.w} × ${e.h}`;
+  c.font = `600 ${12*k}px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif`;
+  const tw = c.measureText(label).width + 14*k, ly = R.y > 30*k ? R.y - 26*k : R.y + 8*k;
+  c.fillStyle = '#4f7cff'; c.fillRect(R.x, ly, tw, 20*k);
+  c.fillStyle = '#fff'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText(label, R.x + 7*k, ly + 10*k);
+}
+// 选框换算成原图像素
+function regionEdges() {
+  const { cr } = splitSource(), r = splitRegion;
+  const x = cr.sx + Math.round(r.x * cr.sw), y = cr.sy + Math.round(r.y * cr.sh);
+  return { x, y, w: Math.max(1, Math.round(r.w * cr.sw)), h: Math.max(1, Math.round(r.h * cr.sh)) };
+}
+function regionDrag(pt) {
+  const W = canvas.width, H = canvas.height, MIN = 12 * W / Math.max(1, parseFloat(canvas.style.width) || W);
+  if (drag.type === 'rmove') {
+    const R = regionPx();
+    const x = Math.max(0, Math.min(W - R.w, pt.x - drag.dx)), y = Math.max(0, Math.min(H - R.h, pt.y - drag.dy));
+    splitRegion = { ...splitRegion, x: x / W, y: y / H };
+    return;
+  }
+  // 缩放：对角固定，拖动的角跟随指针；锁定比例时按比例取较大边并限制在图内
+  const [ox, oy] = drag.o, right = drag.corner.includes('e'), down = drag.corner.includes('s');
+  let w = Math.max(MIN, right ? pt.x - ox : ox - pt.x), h = Math.max(MIN, down ? pt.y - oy : oy - pt.y);
+  const maxW = right ? W - ox : ox, maxH = down ? H - oy : oy;
+  const t0 = ratioNum();
+  if (t0) {
+    w = Math.max(w, h * t0); h = w / t0;
+    if (w > maxW) { w = maxW; h = w / t0; }
+    if (h > maxH) { h = maxH; w = h * t0; }
+  } else { w = Math.min(w, maxW); h = Math.min(h, maxH); }
+  const x = right ? ox : ox - w, y = down ? oy : oy - h;
+  splitRegion = { x: x / W, y: y / H, w: w / W, h: h / H };
+}
 function splitPointerMove(e, pt) {
   if (!drag) {
-    const h = splitHit(pt, canvas.width / canvas.getBoundingClientRect().width);
+    const k = canvas.width / canvas.getBoundingClientRect().width;
     const scrollable = stage.scrollHeight > stage.clientHeight + 1 || stage.scrollWidth > stage.clientWidth + 1;
-    canvas.style.cursor = h ? (h.axis === 'x' ? 'ew-resize' : 'ns-resize') : (scrollable ? 'grab' : 'default');
+    const free = scrollable ? 'grab' : 'default';
+    if (splitMethod === 'region') {
+      const h = regionHit(pt, k);
+      canvas.style.cursor = !h ? free : h.type === 'rmove' ? 'move' : (h.corner === 'nw' || h.corner === 'se' ? 'nwse-resize' : 'nesw-resize');
+    } else {
+      const h = splitHit(pt, k);
+      canvas.style.cursor = h ? (h.axis === 'x' ? 'ew-resize' : 'ns-resize') : (splitSource() ? 'pointer' : free);
+    }
     return;
   }
   if (drag.type === 'splitpan') {
@@ -2138,6 +2298,7 @@ function splitPointerMove(e, pt) {
     render();
     return;
   }
+  if (drag.type === 'rmove' || drag.type === 'rresize') { regionDrag(pt); updateSplitPanel(); render(); return; }
   const arr = drag.axis === 'x' ? splitXs : splitYs, i = drag.i, MIN = 0.01;
   const f = drag.axis === 'x' ? pt.x / canvas.width : pt.y / canvas.height;
   arr[i] = Math.max(arr[i-1] + MIN, Math.min(arr[i+1] - MIN, f));
@@ -2154,8 +2315,15 @@ function updateSplitPanel() {
   document.getElementById('smCountRow').classList.toggle('hidden', splitMethod !== 'count');
   document.getElementById('smRatioRow').classList.toggle('hidden', splitMethod !== 'ratio');
   document.getElementById('smGridRow').classList.toggle('hidden', splitMethod !== 'grid');
-  document.getElementById('splitDirTabs').classList.toggle('hidden', splitMethod === 'grid');
-  document.querySelector('.split-smart').classList.toggle('hidden', splitMethod === 'grid');
+  const isRegion = splitMethod === 'region';
+  document.getElementById('smRegionRow').classList.toggle('hidden', !isRegion);
+  document.getElementById('splitDirTabs').classList.toggle('hidden', splitMethod === 'grid' || isRegion);
+  document.querySelector('.split-smart').classList.toggle('hidden', splitMethod === 'grid' || isRegion);
+  document.getElementById('regionAllBtn').classList.toggle('hidden', !isRegion);
+  document.getElementById('splitClearSel').classList.toggle('hidden', isRegion || !splitSel.size);
+  document.getElementById('splitResetBtn').textContent = isRegion ? t('regionReset') : t('splitEven');
+  document.getElementById('regionRatioSel').value = regionRatio;
+  document.getElementById('splitTip').textContent = isRegion ? t('regionTip') : t('splitTip');
   setVal('splitCount', splitCount); setVal('splitRows', splitRows); setVal('splitCols', splitCols);
   document.getElementById('splitRatioSel').value = splitRatio;
   document.getElementById('splitSmart').checked = splitSmart;
@@ -2163,6 +2331,8 @@ function updateSplitPanel() {
   const info = document.getElementById('splitInfo');
   if (splitFlash) { info.textContent = splitFlash; return; }
   if (!s) { info.textContent = ''; return; }
+  if (isRegion) { const r = splitRegion && regionEdges(); info.textContent = r ? t('regionInfo')(r.w, r.h) : ''; return; }
+  if (splitSel.size) { info.textContent = t('splitSelInfo')(splitSel.size, (splitXs.length - 1) * (splitYs.length - 1)); return; }
   const e = splitEdges(), ws = new Set(), hs = new Set();
   for (let q = 0; q < e.xs.length - 1; q++) ws.add(e.xs[q+1] - e.xs[q]);
   for (let r = 0; r < e.ys.length - 1; r++) hs.add(e.ys[r+1] - e.ys[r]);
@@ -2183,17 +2353,34 @@ document.querySelectorAll('#splitPresets button').forEach(b => {
 });
 document.getElementById('splitRatioSel').onchange = e => { splitRatio = e.target.value; layoutSplit(); };
 document.getElementById('splitSmart').onchange = e => { splitSmart = e.target.checked; layoutSplit(); };
-document.getElementById('splitResetBtn').onclick = () => layoutSplit();
-// 按当前分割线切出每一块（行优先顺序），返回 [{r, c, cv}]
+document.getElementById('splitResetBtn').onclick = () => { if (splitMethod === 'region') splitRegion = null; layoutSplit(); };
+document.getElementById('regionAllBtn').onclick = () => { splitRegion = fitRegionRatio({ x:0, y:0, w:1, h:1 }); updateSidebar(); render(); };
+document.getElementById('regionRatioSel').onchange = e => {
+  regionRatio = e.target.value;
+  if (splitRegion) splitRegion = fitRegionRatio(splitRegion);
+  updateSidebar(); render();
+};
+document.getElementById('splitClearSel').onclick = () => { splitSel.clear(); updateSidebar(); render(); };
+function cutPiece(img, sx, sy, w, h, fmt) {
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const c2 = cv.getContext('2d');
+  if (fmt === 'jpg') { c2.fillStyle = '#ffffff'; c2.fillRect(0, 0, w, h); }  // JPG 无透明，补白底
+  c2.drawImage(img, sx, sy, w, h, 0, 0, w, h);
+  return cv;
+}
+// 切出要导出的块（行优先顺序），返回 [{r, c, idx, cv}]：框选 → 只有选区；选了块 → 只要选中的；否则全部
 function splitPieces(fmt) {
-  const s = splitSource(), e = splitEdges(), out = [];
-  for (let r = 0; r < e.ys.length - 1; r++) for (let c = 0; c < e.xs.length - 1; c++) {
+  const s = splitSource();
+  if (splitMethod === 'region') {
+    const g = regionEdges();
+    return [{ r:0, c:0, idx:0, region:true, w:g.w, h:g.h, cv: cutPiece(s.img, g.x, g.y, g.w, g.h, fmt) }];
+  }
+  const e = splitEdges(), out = [], cols = e.xs.length - 1;
+  for (let r = 0; r < e.ys.length - 1; r++) for (let c = 0; c < cols; c++) {
+    const idx = r * cols + c;
+    if (splitSel.size && !splitSel.has(idx)) continue;
     const sx = e.xs[c], sy = e.ys[r], w = Math.max(1, e.xs[c+1] - sx), h = Math.max(1, e.ys[r+1] - sy);
-    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
-    const c2 = cv.getContext('2d');
-    if (fmt === 'jpg') { c2.fillStyle = '#ffffff'; c2.fillRect(0, 0, w, h); }  // JPG 无透明，补白底
-    c2.drawImage(s.img, sx, sy, w, h, 0, 0, w, h);
-    out.push({ r, c, cv });
+    out.push({ r, c, idx, cv: cutPiece(s.img, sx, sy, w, h, fmt) });
   }
   return out;
 }
@@ -2248,10 +2435,15 @@ async function splitDownload() {
   if (!splitSource()) { alert(t('splitNoSrc')); return; }
   const fmt = document.getElementById('fmtSel').value;
   const pieces = splitPieces(fmt), stamp = Date.now();
-  if (pieces.length === 1) { downloadBlob(await canvasBlob(pieces[0].cv, fmt), `split_${stamp}.${fmt}`); return; }
-  const pad = String(pieces.length).length;
-  const files = await Promise.all(pieces.map(async (p, i) => ({
-    name: `${String(i + 1).padStart(pad, '0')}_r${p.r + 1}c${p.c + 1}.${fmt}`,
+  const total = (splitXs.length - 1) * (splitYs.length - 1), pad = String(total).length;
+  const num = p => String(p.idx + 1).padStart(pad, '0');   // 保留原编号，只导出选中的也不会乱序
+  if (pieces.length === 1) {
+    const p = pieces[0];
+    downloadBlob(await canvasBlob(p.cv, fmt), p.region ? `region_${p.w}x${p.h}_${stamp}.${fmt}` : total > 1 ? `split_${num(p)}_${stamp}.${fmt}` : `split_${stamp}.${fmt}`);
+    return;
+  }
+  const files = await Promise.all(pieces.map(async p => ({
+    name: `${num(p)}_r${p.r + 1}c${p.c + 1}.${fmt}`,
     data: new Uint8Array(await (await canvasBlob(p.cv, fmt)).arrayBuffer()),
   })));
   downloadBlob(makeZip(files), `split_${pieces.length}_${stamp}.zip`);
