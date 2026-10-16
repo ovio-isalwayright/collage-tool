@@ -127,7 +127,10 @@
   .cutout-tabs button { padding:7px 16px; }
   #splitModal { position:fixed; inset:0; background:rgba(25,30,45,.6); backdrop-filter:blur(3px); z-index:200; display:none; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:12px; }
   #splitModal.show { display:flex; }
-  #splitCanvas { background:#0c0d10; border-radius:12px; touch-action:none; box-shadow:var(--shadow-lg); }
+  .splitView { max-width:94vw; max-height:58vh; overflow:auto; border-radius:12px; background:#0c0d10; box-shadow:var(--shadow-lg); flex-shrink:0; }
+  #splitCanvas { display:block; touch-action:none; }
+  .splitDirTabs { width:auto; }
+  .splitDirTabs button { padding:6px 12px; font-size:12px; white-space:nowrap; }
   #splitModal .tip2 { color:#eef1f6; font-size:13px; max-width:min(90vw,640px); text-align:center; }
   .splitBar { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px 16px; background:var(--panel); padding:10px 16px; border-radius:12px; max-width:min(94vw,760px); }
   .splitBar input[type=number] { width:54px; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:13px; text-align:center; }
@@ -377,10 +380,15 @@
   </div>
 </div>
 <div id="splitModal">
-  <canvas id="splitCanvas"></canvas>
+  <div class="splitView" id="splitView"><canvas id="splitCanvas"></canvas></div>
   <div class="splitBar">
-    <label class="cutrow"><span data-i18n="splitRows">行</span> <input type="number" id="splitRows" min="1" max="10" value="3"></label>
-    <label class="cutrow"><span data-i18n="splitCols">列</span> <input type="number" id="splitCols" min="1" max="10" value="3"></label>
+    <label class="cutrow"><span data-i18n="splitCount">张数</span> <input type="number" id="splitCount" min="1" max="50" value="3"></label>
+    <div class="tabs splitDirTabs" id="splitDir">
+      <button data-sdir="v" class="active" data-i18n="splitDirV">↓ 上下切</button>
+      <button data-sdir="h" data-i18n="splitDirH">→ 左右切</button>
+    </div>
+    <label class="cutrow"><span data-i18n="splitRows">行</span> <input type="number" id="splitRows" min="1" max="50" value="3"></label>
+    <label class="cutrow"><span data-i18n="splitCols">列</span> <input type="number" id="splitCols" min="1" max="50" value="3"></label>
     <div class="splitPresets" id="splitPresets">
       <button data-rc="1,2">1×2</button>
       <button data-rc="2,1">2×1</button>
@@ -452,6 +460,7 @@ const I18N = {
     cutTip:'自动去掉四周接近纯色的背景（适合白墙/纯色底），拖容差调整强度，点图可重选背景色',
     mImport:'＋ 图片', mExport:'⬇ 导出', navLayout:'布局', navStyle:'样式', navExport:'导出',
     splitBtn:'⊞ 分割图片', popSplit:'⊞ 分割', splitRows:'行', splitCols:'列', splitEven:'重置均分',
+    splitCount:'张数', splitDirV:'↓ 上下切', splitDirH:'→ 左右切',
     splitLib:'＋ 存入图片库', splitDl:'⬇ 下载全部 (ZIP)', splitDl1:'⬇ 下载',
     splitInfo:(n, sz) => `共 ${n} 张${sz ? ` · 每张 ${sz} px` : ''} · 拖动分割线可微调，编号即发布顺序`,
   },
@@ -487,6 +496,7 @@ const I18N = {
     cutTip:'Removes near-solid background from the edges (best for white walls / solid backdrops). Drag tolerance to tune; tap the image to re-pick the background color',
     mImport:'＋ Photo', mExport:'⬇ Export', navLayout:'Layout', navStyle:'Style', navExport:'Export',
     splitBtn:'⊞ Split Image', popSplit:'⊞ Split', splitRows:'Rows', splitCols:'Cols', splitEven:'Reset Even',
+    splitCount:'Pieces', splitDirV:'↓ Top–Bottom', splitDirH:'→ Left–Right',
     splitLib:'＋ Save to Library', splitDl:'⬇ Download All (ZIP)', splitDl1:'⬇ Download',
     splitInfo:(n, sz) => `${n} piece${n>1?'s':''}${sz ? ` · ${sz} px each` : ''} · drag lines to fine-tune; numbers show posting order`,
   },
@@ -1884,20 +1894,31 @@ document.getElementById('cropOk').onclick = () => {
 const splitModal = document.getElementById('splitModal');
 const splitCanvas = document.getElementById('splitCanvas');
 const spx = splitCanvas.getContext('2d');
+const splitView = document.getElementById('splitView');
 let sp = null;        // {img, cr:{sx,sy,sw,sh}, xs:[0..1], ys:[0..1]} 分割线位置为 0~1 比例
-let spDrag = null;    // {axis:'x'|'y', i}
+let spDrag = null;    // {axis:'x'|'y', i} 拖分割线；{pan:true,...} 拖空白处滚动预览
+let spDir = 'v';      // 按张数切时的方向：v 上下切，h 左右切
 function evenCuts(n) { return Array.from({ length: n + 1 }, (_, i) => i / n); }
-function clampRC(v) { return Math.max(1, Math.min(10, Math.round(+v) || 1)); }
+function clampRC(v) { return Math.max(1, Math.min(50, Math.round(+v) || 1)); }
 function openSplit(img, crop) {
   const cr = crop || { sx:0, sy:0, sw:img.width, sh:img.height };
   const maxW = Math.min(innerWidth * 0.9, 1000), maxH = innerHeight * 0.58;
-  const s = Math.min(maxW / cr.sw, maxH / cr.sh);
+  let s = Math.min(maxW / cr.sw, maxH / cr.sh);
+  if (cr.sw * s < Math.min(360, maxW)) s = Math.min(360, maxW) / cr.sw;   // 竖长图：保证预览宽度，纵向滚动
+  if (cr.sh * s < Math.min(240, maxH)) s = Math.min(240, maxH) / cr.sh;   // 横长图：保证预览高度，横向滚动
+  s = Math.min(s, 16000 / Math.max(cr.sw, cr.sh));                        // 防止预览画布超出浏览器上限
   splitCanvas.width = Math.max(1, Math.round(cr.sw * s));
   splitCanvas.height = Math.max(1, Math.round(cr.sh * s));
   sp = { img, cr, xs: null, ys: null };
-  setSplitGrid(document.getElementById('splitRows').value, document.getElementById('splitCols').value);
   splitModal.classList.add('show');
+  splitView.scrollTop = 0; splitView.scrollLeft = 0;
+  // 长图默认按张数切：竖长图每张约 3:4，横长图每张约 1:1，可再自行改张数
+  const ar = cr.sh / cr.sw;
+  if (ar >= 2) { spDir = 'v'; setSplitCount(Math.round(ar * 3 / 4)); }
+  else if (ar <= 0.5) { spDir = 'h'; setSplitCount(Math.round(1 / ar)); }
+  else setSplitGrid(document.getElementById('splitRows').value, document.getElementById('splitCols').value);
 }
+function setSplitCount(n) { n = clampRC(n); if (spDir === 'v') setSplitGrid(n, 1); else setSplitGrid(1, n); }
 function closeSplit() { splitModal.classList.remove('show'); sp = null; spDrag = null; }
 function setSplitGrid(r, c) {
   if (!sp) return;
@@ -1938,6 +1959,7 @@ function drawSplit() {
   spx.font = `700 ${fs}px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif`;
   spx.textAlign = 'center'; spx.textBaseline = 'middle';
   for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    if (Math.min((xs[c+1] - xs[c]) * W, (ys[r+1] - ys[r]) * H) < fs * 2.2) continue;   // 太窄放不下编号
     const cx = (xs[c] + xs[c+1]) / 2 * W, cy = (ys[r] + ys[r+1]) / 2 * H, rr = fs * 0.95;
     spx.fillStyle = 'rgba(0,0,0,.55)';
     spx.beginPath(); spx.arc(cx, cy, rr, 0, 7); spx.fill();
@@ -1952,6 +1974,11 @@ function drawSplit() {
   document.getElementById('splitInfo').textContent = t('splitInfo')(rows * cols, sz);
   document.getElementById('splitDl').textContent = rows * cols > 1 ? t('splitDl') : t('splitDl1');
   document.querySelectorAll('#splitPresets button').forEach(b => b.classList.toggle('active', b.dataset.rc === `${rows},${cols}`));
+  // 同步“张数 + 方向”
+  if (cols === 1 && rows > 1) spDir = 'v';
+  else if (rows === 1 && cols > 1) spDir = 'h';
+  document.getElementById('splitCount').value = rows * cols;
+  document.querySelectorAll('#splitDir button').forEach(b => b.classList.toggle('active', b.dataset.sdir === spDir));
 }
 function splitPt(e) {
   const b = splitCanvas.getBoundingClientRect();
@@ -1966,15 +1993,22 @@ function splitHit(p) {
 }
 splitCanvas.addEventListener('pointerdown', e => {
   if (!sp) return;
-  spDrag = splitHit(splitPt(e));
-  if (spDrag) splitCanvas.setPointerCapture(e.pointerId);
+  spDrag = splitHit(splitPt(e))
+    || { pan:true, x:e.clientX, y:e.clientY, sl:splitView.scrollLeft, st:splitView.scrollTop };
+  splitCanvas.setPointerCapture(e.pointerId);
 });
 splitCanvas.addEventListener('pointermove', e => {
   if (!sp) return;
   const p = splitPt(e);
   if (!spDrag) {
     const h = splitHit(p);
-    splitCanvas.style.cursor = h ? (h.axis === 'x' ? 'ew-resize' : 'ns-resize') : 'default';
+    const scrollable = splitView.scrollHeight > splitView.clientHeight || splitView.scrollWidth > splitView.clientWidth;
+    splitCanvas.style.cursor = h ? (h.axis === 'x' ? 'ew-resize' : 'ns-resize') : (scrollable ? 'grab' : 'default');
+    return;
+  }
+  if (spDrag.pan) {
+    splitView.scrollLeft = spDrag.sl - (e.clientX - spDrag.x);
+    splitView.scrollTop = spDrag.st - (e.clientY - spDrag.y);
     return;
   }
   const arr = spDrag.axis === 'x' ? sp.xs : sp.ys, i = spDrag.i, MIN = 0.02;
@@ -1987,6 +2021,10 @@ splitCanvas.addEventListener('pointerup', spEnd);
 splitCanvas.addEventListener('pointercancel', spEnd);
 document.getElementById('splitRows').oninput = e => { if (e.target.value !== '') setSplitGrid(e.target.value, document.getElementById('splitCols').value); };
 document.getElementById('splitCols').oninput = e => { if (e.target.value !== '') setSplitGrid(document.getElementById('splitRows').value, e.target.value); };
+document.getElementById('splitCount').oninput = e => { if (e.target.value !== '') setSplitCount(e.target.value); };
+document.querySelectorAll('#splitDir button').forEach(b => {
+  b.onclick = () => { spDir = b.dataset.sdir; setSplitCount(document.getElementById('splitCount').value); };
+});
 document.querySelectorAll('#splitPresets button').forEach(b => {
   b.onclick = () => { const [r, c] = b.dataset.rc.split(','); setSplitGrid(r, c); };
 });
