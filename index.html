@@ -125,26 +125,30 @@
   .cutrow input[type=range] { width:150px; accent-color:var(--accent); }
   .cutout-tabs { width:auto; }
   .cutout-tabs button { padding:7px 16px; }
-  #splitModal { position:fixed; inset:0; background:rgba(25,30,45,.6); backdrop-filter:blur(3px); z-index:200; display:none; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:12px; }
-  #splitModal.show { display:flex; }
-  .splitView { max-width:94vw; max-height:58vh; overflow:auto; border-radius:12px; background:#0c0d10; box-shadow:var(--shadow-lg); flex-shrink:0; }
-  #splitCanvas { display:block; touch-action:none; }
-  .splitDirTabs { width:auto; }
-  .splitDirTabs button { padding:6px 12px; font-size:12px; white-space:nowrap; }
-  #splitModal .tip2 { color:#eef1f6; font-size:13px; max-width:min(90vw,640px); text-align:center; }
-  .splitBar { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px 16px; background:var(--panel); padding:10px 16px; border-radius:12px; max-width:min(94vw,760px); }
-  .splitBar input[type=number] { width:54px; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:13px; text-align:center; }
-  .splitBar input[type=number]:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
-  .splitPresets { display:flex; gap:5px; flex-wrap:wrap; }
-  .splitPresets button { border:1px solid var(--border); background:var(--panel-2); color:var(--text); padding:6px 10px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; transition:.12s; }
-  .splitPresets button:hover { border-color:var(--faint); }
-  .splitPresets button.active { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
-  #splitEven,#splitLib { background:#ffffff; color:var(--text); }
-  #splitEven:hover,#splitLib:hover { background:var(--ghost); }
-  #splitDl { background:var(--accent); color:#fff; }
-  #splitDl:hover { background:var(--accent-hover); }
-  .libthumb .spl { position:absolute; left:3px; bottom:3px; width:20px; height:20px; background:rgba(0,0,0,.6); color:#fff; border-radius:6px; font-size:13px; line-height:20px; text-align:center; cursor:pointer; }
-  .libthumb .spl:hover { background:var(--accent); }
+  .split-src { display:flex; align-items:center; gap:10px; background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:8px; min-height:58px; }
+  .split-src img { width:44px; height:44px; object-fit:cover; border-radius:7px; flex-shrink:0; }
+  .split-src span { font-size:12px; color:var(--muted); line-height:1.5; }
+  .split-opts { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+  .split-opts label.row { margin-bottom:0; }
+  .split-opts select { flex:1; min-width:0; }
+  .stepper { display:flex; align-items:center; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--panel-2); }
+  .stepper button { border:none; background:transparent; width:30px; height:30px; font-size:16px; color:var(--text); cursor:pointer; }
+  .stepper button:hover { background:var(--ghost-hover); }
+  .stepper input { width:46px; border:none; background:transparent; text-align:center; font-size:14px; font-weight:600; color:var(--text); -moz-appearance:textfield; }
+  .stepper input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  .stepper input:focus { outline:none; }
+  .split-rc { display:flex; gap:10px; }
+  .split-rc label { flex:1; display:flex; align-items:center; gap:6px; font-size:13px; }
+  .split-rc input { width:100%; min-width:0; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 8px; font-size:13px; text-align:center; }
+  .split-presets { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:8px; }
+  .split-presets button { border:1px solid var(--border); background:var(--panel-2); color:var(--text); padding:6px 0; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; }
+  .split-presets button.active { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+  .split-smart { font-size:12px !important; }
+  .split-opts .btn { margin-bottom:0; }
+  .split-info { font-size:13px; font-weight:600; color:var(--accent); margin:12px 0 6px; }
+  .libthumb.sel { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .stage.scroll { overflow:auto; align-items:flex-start; justify-content:flex-start; }
+  .stage.scroll #canvasWrap { margin:auto; }
   .custom-tpl { display:flex; align-items:center; gap:8px; margin-top:12px; font-size:12px; color:var(--muted); }
   .custom-tpl input { width:56px; background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:7px 8px; font-size:13px; text-align:center; }
   .custom-tpl input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
@@ -225,8 +229,6 @@
     <div class="sec" id="secImport">
       <button class="btn" id="uploadBtn" data-i18n="import">＋ 导入照片</button>
       <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
-      <button class="btn ghost" id="splitBtn" data-i18n="splitBtn">⊞ 分割图片</button>
-      <input type="file" id="splitInput" accept="image/*" class="hidden">
     </div>
     <div class="sec" id="secMode">
       <h3 data-i18n="mode">模式</h3>
@@ -234,6 +236,7 @@
         <button data-mode="template" class="active" data-i18n="modeTemplate">模板</button>
         <button data-mode="free" data-i18n="modeFree">自由</button>
         <button data-mode="strip" data-i18n="modeStrip">长图</button>
+        <button data-mode="split" data-i18n="modeSplit">分割</button>
       </div>
     </div>
     <div class="sec" id="secTpl">
@@ -278,6 +281,48 @@
         <button data-dir="h" data-i18n="dirH">→ 横向</button>
       </div>
       <p class="tip" style="margin-top:8px" data-i18n="stripTip">点击画布上的图块可前移 / 后移 / 移除</p>
+    </div>
+    <div class="sec hidden" id="secSplit">
+      <h3 data-i18n="splitSrcTitle">要分割的图片</h3>
+      <div class="split-src" id="splitSrcBox"></div>
+      <h3 style="margin-top:16px" data-i18n="splitHowTitle">切割方式</h3>
+      <div class="tabs" id="splitMethodTabs">
+        <button data-sm="count" class="active" data-i18n="smCount">按张数</button>
+        <button data-sm="ratio" data-i18n="smRatio">按比例</button>
+        <button data-sm="grid" data-i18n="smGrid">宫格</button>
+      </div>
+      <div class="split-opts">
+        <label class="row" id="smCountRow"><span data-i18n="splitCount">张数</span>
+          <span class="stepper"><button data-step="-1">−</button><input type="number" id="splitCount" min="1" max="50" value="3"><button data-step="1">＋</button></span>
+        </label>
+        <label class="row" id="smRatioRow"><span data-i18n="splitPieceRatio">每张比例</span>
+          <select id="splitRatioSel">
+            <option value="3:4" data-i18n="ratio34">3:4 小红书</option>
+            <option value="1:1" data-i18n="ratio11">1:1 方形</option>
+            <option value="4:5" data-i18n="ratio45">4:5 Instagram</option>
+            <option value="2:3" data-i18n="ratio23">2:3</option>
+            <option value="9:16" data-i18n="ratio916">9:16 全屏</option>
+          </select>
+        </label>
+        <div id="smGridRow">
+          <div class="split-rc">
+            <label><span data-i18n="splitRows">行</span> <input type="number" id="splitRows" min="1" max="20" value="3"></label>
+            <label><span data-i18n="splitCols">列</span> <input type="number" id="splitCols" min="1" max="20" value="3"></label>
+          </div>
+          <div class="split-presets" id="splitPresets">
+            <button data-rc="1,2">1×2</button><button data-rc="2,1">2×1</button><button data-rc="1,3">1×3</button>
+            <button data-rc="2,2">2×2</button><button data-rc="3,3">3×3</button><button data-rc="4,4">4×4</button>
+          </div>
+        </div>
+        <div class="tabs" id="splitDirTabs">
+          <button data-sdir="v" class="active" data-i18n="splitDirV">↓ 上下切</button>
+          <button data-sdir="h" data-i18n="splitDirH">→ 左右切</button>
+        </div>
+        <label class="row split-smart"><span data-i18n="splitSmart">智能避开文字（切在空白处）</span> <input type="checkbox" id="splitSmart" checked></label>
+        <button class="btn ghost" id="splitResetBtn" data-i18n="splitEven">重置分割线</button>
+      </div>
+      <p class="split-info" id="splitInfo"></p>
+      <p class="tip" data-i18n="splitTip">编号就是保存/发布顺序。按比例切时，最后一张是剩下的部分</p>
     </div>
     <div class="sec" id="secStyle">
       <h3 data-i18n="styleTitle">样式调节</h3>
@@ -324,7 +369,7 @@
           <label class="exp-field"><span data-i18n="fmt">格式</span>
             <select id="fmtSel"><option value="png">PNG</option><option value="jpg">JPG</option></select>
           </label>
-          <label class="exp-field"><span data-i18n="size">尺寸</span>
+          <label class="exp-field" id="sizeField"><span data-i18n="size">尺寸</span>
             <select id="sizeSel"><option value="1200" data-i18n="sizeStd">标准 1200px</option><option value="2400" selected data-i18n="sizeHd">高清 2400px</option><option value="4000" data-i18n="sizeUhd">超清 4000px</option></select>
           </label>
         </div>
@@ -379,34 +424,6 @@
     <button id="cutOk" data-i18n="cutApply">✔ 应用抠图</button>
   </div>
 </div>
-<div id="splitModal">
-  <div class="splitView" id="splitView"><canvas id="splitCanvas"></canvas></div>
-  <div class="splitBar">
-    <label class="cutrow"><span data-i18n="splitCount">张数</span> <input type="number" id="splitCount" min="1" max="50" value="3"></label>
-    <div class="tabs splitDirTabs" id="splitDir">
-      <button data-sdir="v" class="active" data-i18n="splitDirV">↓ 上下切</button>
-      <button data-sdir="h" data-i18n="splitDirH">→ 左右切</button>
-    </div>
-    <label class="cutrow"><span data-i18n="splitRows">行</span> <input type="number" id="splitRows" min="1" max="50" value="3"></label>
-    <label class="cutrow"><span data-i18n="splitCols">列</span> <input type="number" id="splitCols" min="1" max="50" value="3"></label>
-    <div class="splitPresets" id="splitPresets">
-      <button data-rc="1,2">1×2</button>
-      <button data-rc="2,1">2×1</button>
-      <button data-rc="1,3">1×3</button>
-      <button data-rc="3,1">3×1</button>
-      <button data-rc="2,2">2×2</button>
-      <button data-rc="3,3">3×3</button>
-    </div>
-  </div>
-  <span class="tip2" id="splitInfo"></span>
-  <div class="cropBtns">
-    <button id="splitCancel" data-i18n="cancel">取消</button>
-    <button id="splitEven" data-i18n="splitEven">重置均分</button>
-    <button id="splitLib" data-i18n="splitLib">＋ 存入图片库</button>
-    <button id="splitDl" data-i18n="splitDl">⬇ 下载全部 (ZIP)</button>
-  </div>
-</div>
-
 <script>
 'use strict';
 // ---------- 状态 ----------
@@ -459,10 +476,15 @@ const I18N = {
     cutTol:'容差', cutTransparent:'透明', cutWhite:'白底', cutApply:'✔ 应用抠图',
     cutTip:'自动去掉四周接近纯色的背景（适合白墙/纯色底），拖容差调整强度，点图可重选背景色',
     mImport:'＋ 图片', mExport:'⬇ 导出', navLayout:'布局', navStyle:'样式', navExport:'导出',
-    splitBtn:'⊞ 分割图片', popSplit:'⊞ 分割', splitRows:'行', splitCols:'列', splitEven:'重置均分',
-    splitCount:'张数', splitDirV:'↓ 上下切', splitDirH:'→ 左右切',
-    splitLib:'＋ 存入图片库', splitDl:'⬇ 下载全部 (ZIP)', splitDl1:'⬇ 下载',
-    splitInfo:(n, sz) => `共 ${n} 张${sz ? ` · 每张 ${sz} px` : ''} · 拖动分割线可微调，编号即发布顺序`,
+    modeSplit:'分割', popSplit:'⊞ 分割', hintSplit:'点右侧图片库选一张图 · 拖动画布上的分割线微调 · 拖空白处滚动长图',
+    splitSrcTitle:'要分割的图片', splitNoSrc:'点右侧图片库里的一张图开始（或先导入图片）', srcSizeLabel:(w,h)=>`原图 ${w} × ${h} px`,
+    splitHowTitle:'切割方式', smCount:'按张数', smRatio:'按比例', smGrid:'宫格',
+    splitCount:'张数', splitPieceRatio:'每张比例', splitRows:'行', splitCols:'列',
+    splitDirV:'↓ 上下切', splitDirH:'→ 左右切', splitSmart:'智能避开文字（切在空白处）', splitEven:'重置分割线',
+    splitTip:'编号就是保存/发布顺序。按比例切时，最后一张是剩下的部分',
+    splitInfo:(n, sz) => `共 ${n} 张 · ${sz}`, splitSizeEach:(w,h)=>`每张 ${w} × ${h} px`, splitSizeVar:'尺寸略有不同',
+    splitDl:'⬇ 下载全部 (ZIP)', splitDl1:'⬇ 下载', splitLib:'＋ 存入图片库', splitSaved:n=>`已存入图片库 ${n} 张`,
+    ratio11:'1:1 方形', ratio34:'3:4 小红书', ratio45:'4:5 Instagram', ratio23:'2:3', ratio916:'9:16 全屏',
   },
   en: {
     appName:'Collage', import:'＋ Import Photos', mode:'Mode', modeTemplate:'Grid', modeFree:'Free', modeStrip:'Stitch',
@@ -495,10 +517,15 @@ const I18N = {
     cutTol:'Tolerance', cutTransparent:'Transparent', cutWhite:'White BG', cutApply:'✔ Apply Cutout',
     cutTip:'Removes near-solid background from the edges (best for white walls / solid backdrops). Drag tolerance to tune; tap the image to re-pick the background color',
     mImport:'＋ Photo', mExport:'⬇ Export', navLayout:'Layout', navStyle:'Style', navExport:'Export',
-    splitBtn:'⊞ Split Image', popSplit:'⊞ Split', splitRows:'Rows', splitCols:'Cols', splitEven:'Reset Even',
-    splitCount:'Pieces', splitDirV:'↓ Top–Bottom', splitDirH:'→ Left–Right',
-    splitLib:'＋ Save to Library', splitDl:'⬇ Download All (ZIP)', splitDl1:'⬇ Download',
-    splitInfo:(n, sz) => `${n} piece${n>1?'s':''}${sz ? ` · ${sz} px each` : ''} · drag lines to fine-tune; numbers show posting order`,
+    modeSplit:'Split', popSplit:'⊞ Split', hintSplit:'Click a library photo to split it · drag lines on the canvas to fine-tune · drag empty space to scroll long images',
+    splitSrcTitle:'Image to Split', splitNoSrc:'Click a photo in the library to start (or import one first)', srcSizeLabel:(w,h)=>`Original ${w} × ${h} px`,
+    splitHowTitle:'Split By', smCount:'Count', smRatio:'Ratio', smGrid:'Grid',
+    splitCount:'Pieces', splitPieceRatio:'Piece ratio', splitRows:'Rows', splitCols:'Cols',
+    splitDirV:'↓ Top–Bottom', splitDirH:'→ Left–Right', splitSmart:'Avoid cutting text (cut in gaps)', splitEven:'Reset Lines',
+    splitTip:'Numbers are the save/posting order. In Ratio mode the last piece is whatever is left',
+    splitInfo:(n, sz) => `${n} piece${n>1?'s':''} · ${sz}`, splitSizeEach:(w,h)=>`${w} × ${h} px each`, splitSizeVar:'sizes vary slightly',
+    splitDl:'⬇ Download All (ZIP)', splitDl1:'⬇ Download', splitLib:'＋ Save to Library', splitSaved:n=>`Saved ${n} piece${n>1?'s':''} to library`,
+    ratio11:'1:1 Square', ratio34:'3:4 Portrait', ratio45:'4:5 Instagram', ratio23:'2:3', ratio916:'9:16 Full screen',
   },
 };
 function t(k) { const v = I18N[lang][k]; return v !== undefined ? v : I18N.zh[k]; }
@@ -509,7 +536,6 @@ function applyLang() {
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.querySelectorAll('#langSw button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   renderTray(); updateSidebar(); render();
-  if (sp) drawSplit();
 }
 
 const canvas = document.getElementById('canvas');
@@ -566,6 +592,7 @@ function baseSize() {
 function canvasSize() {
   if (mode === 'template') return baseSize();
   if (mode === 'free') { const b = baseSize(); return [b[0]*pages, b[1]]; }
+  if (mode === 'split') return splitPreviewSize();
   const list = stripOrder.map(id => photoById(id)).filter(Boolean);
   if (!list.length) return [1000, 700];
   if (stripDir === 'v') {
@@ -767,6 +794,7 @@ function drawBgImage(c, W, H) {
 }
 function renderScene(c, W, H, showUI) {
   c.clearRect(0, 0, W, H);
+  if (mode === 'split') { renderSplitScene(c, W, H); return; }
   if (bgType === 'color') { c.fillStyle = bg; c.fillRect(0, 0, W, H); }
   else if (bgType === 'image' && bgImg) drawBgImage(c, W, H);
   // transparent: 不填充
@@ -861,7 +889,14 @@ function renderScene(c, W, H, showUI) {
 function fitCanvas() {
   const availW = Math.max(stage.clientWidth - 48, 100);
   const availH = Math.max(stage.clientHeight - 48, 100);
-  const s = Math.min(availW / canvas.width, availH / canvas.height, 1);
+  let s = Math.min(availW / canvas.width, availH / canvas.height, 1);
+  stage.classList.toggle('scroll', mode === 'split');
+  if (mode === 'split' && splitSrc != null) {
+    // 长图不要缩成细条：保证可读宽度/高度，超出部分在舞台内滚动
+    const minW = Math.min(availW, 420), minH = Math.min(availH, 280);
+    if (canvas.width * s < minW) s = minW / canvas.width;
+    if (canvas.height * s < minH) s = minH / canvas.height;
+  }
   canvas.style.width = Math.round(canvas.width * s) + 'px';
   canvas.style.height = Math.round(canvas.height * s) + 'px';
 }
@@ -869,10 +904,12 @@ function render() {
   const [W, H] = canvasSize();
   if (canvas.width !== W) canvas.width = W;
   if (canvas.height !== H) canvas.height = H;
+  if (mode === 'split') fitCanvas();   // 分割模式按显示尺寸画线宽/手柄，需先定好显示尺寸
   renderScene(ctx, W, H, true);
   fitCanvas();
-  canvas.classList.toggle('alpha', bgTransparent);
-  document.getElementById('sizeLabel').textContent = t('sizeLabel')(W, H);
+  canvas.classList.toggle('alpha', bgTransparent || mode === 'split');
+  const src = mode === 'split' ? splitSource() : null;
+  document.getElementById('sizeLabel').textContent = src ? t('srcSizeLabel')(src.cr.sw, src.cr.sh) : t('sizeLabel')(W, H);
 }
 window.addEventListener('resize', render);
 
@@ -996,18 +1033,20 @@ function initCells() {
 }
 
 // ---------- 模式切换 ----------
-const hintKey = { template:'hintTemplate', free:'hintFree', strip:'hintStrip' };
-document.querySelectorAll('.tabs [data-mode]').forEach(b => {
-  b.onclick = () => {
-    mode = b.dataset.mode;
-    document.querySelectorAll('.tabs [data-mode]').forEach(e => e.classList.toggle('active', e === b));
-    selCell = -1; selFree = -1; selStrip = -1;
-    hidePop();
-    updateSidebar();
-    render();
-    renderTray();
-  };
-});
+const hintKey = { template:'hintTemplate', free:'hintFree', strip:'hintStrip', split:'hintSplit' };
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tabs [data-mode]').forEach(e => e.classList.toggle('active', e.dataset.mode === m));
+  selCell = -1; selFree = -1; selStrip = -1;
+  if (m === 'split' && splitSrc == null && photos.length) setSplitSource(photos[photos.length - 1].id);
+  if (m === 'split' && mPanel === 'style') mPanel = 'layout';
+  hidePop();
+  updateSidebar();
+  render();
+  renderTray();
+  applyMobilePanel();
+}
+document.querySelectorAll('.tabs [data-mode]').forEach(b => { b.onclick = () => setMode(b.dataset.mode); });
 document.querySelectorAll('[data-dir]').forEach(b => {
   b.onclick = () => {
     stripDir = b.dataset.dir;
@@ -1018,7 +1057,18 @@ document.querySelectorAll('[data-dir]').forEach(b => {
 });
 function updateSidebar() {
   document.getElementById('secTpl').classList.toggle('hidden', mode !== 'template');
-  document.getElementById('secAspect').classList.toggle('hidden', mode === 'strip');
+  document.getElementById('secAspect').classList.toggle('hidden', mode === 'strip' || mode === 'split');
+  document.getElementById('secStyle').classList.toggle('hidden', mode === 'split');
+  document.getElementById('secSplit').classList.toggle('hidden', mode !== 'split');
+  document.getElementById('sizeField').classList.toggle('hidden', mode === 'split');
+  document.querySelector('#mNav [data-mpanel="style"]').classList.toggle('hidden', mode === 'split');
+  if (mode === 'split') {
+    const pieces = (splitXs.length - 1) * (splitYs.length - 1);
+    document.getElementById('exportBtn').textContent = pieces > 1 ? t('splitDl') : t('splitDl1');
+    updateSplitPanel();
+  } else {
+    document.getElementById('exportBtn').textContent = t('exportBtn');
+  }
   document.getElementById('secFreeTpl').classList.toggle('hidden', mode !== 'free');
   document.getElementById('secPages').classList.toggle('hidden', mode !== 'free');
   document.getElementById('secStrip').classList.toggle('hidden', mode !== 'strip');
@@ -1028,7 +1078,7 @@ function updateSidebar() {
   document.getElementById('secFree').classList.toggle('hidden', !(freeItem && freeItems[selFree].type !== 'group'));
   document.getElementById('modeHint').textContent = t(hintKey[mode]);
   document.getElementById('pageInfo').textContent = t('pageInfo')(pages);
-  wrap.classList.toggle('noresize', mode === 'strip');
+  wrap.classList.toggle('noresize', mode === 'strip' || mode === 'split');
   if (cellSel) {
     const cell = cells[selCell];
     document.getElementById('zoomSlider').value = Math.round(cell.zoom*100);
@@ -1171,6 +1221,7 @@ function addFiles(files, targetCell) {
   let first = true;
   [...files].filter(f => f.type.startsWith('image/')).forEach(f => {
     const toCell = first && targetCell != null ? targetCell : null;
+    const isFirst = first;
     first = false;
     const url = URL.createObjectURL(f);
     const img = new Image();
@@ -1188,6 +1239,7 @@ function addFiles(files, targetCell) {
       const bw = Math.min(b[0], b[1]) * 0.45;
       const k = freeItems.length;
       freeItems.push({ p: p.id, x: b[0]/2 + (k%5-2)*40, y: b[1]/2 + (k%5-2)*40, w: bw, h: bw*img.height/img.width, scale:1, rot:0, crop:null });
+      if (mode === 'split' && (isFirst || splitSrc == null)) setSplitSource(p.id);   // 分割模式：导入的图直接作为分割源
       renderTray();
       render();
     };
@@ -1241,11 +1293,10 @@ function renderLibrary() {
   }
   photos.forEach(p => {
     const d = document.createElement('div');
-    d.className = 'libthumb';
+    d.className = 'libthumb' + (mode === 'split' && p.id === splitSrc ? ' sel' : '');
     d.draggable = true;
-    d.innerHTML = `<img src="${p.url}"><span class="del">×</span><span class="spl" title="${t('popSplit')}">⊞</span>`;
+    d.innerHTML = `<img src="${p.url}"><span class="del">×</span>`;
     d.querySelector('.del').onclick = ev => { ev.stopPropagation(); removePhoto(p.id); };
-    d.querySelector('.spl').onclick = ev => { ev.stopPropagation(); openSplit(p.img); };
     d.ondragstart = ev => { dragPhotoId = p.id; ev.dataTransfer.setData('text/plain', p.id); };
     d.onclick = () => placeFromLibrary(p.id);
     libGrid.appendChild(d);
@@ -1254,6 +1305,7 @@ function renderLibrary() {
 function placeFromLibrary(id) {
   const p = photoById(id);
   if (!p) return;
+  if (mode === 'split') { setSplitSource(id); return; }
   if (mode === 'template') {
     const empty = cells.findIndex(c => c.p == null);
     if (empty >= 0) { cells[empty] = { p:id, zoom:1, ox:0, oy:0, crop:null, text:null }; selCell = empty; }
@@ -1333,6 +1385,7 @@ function removePhoto(id) {
   freeItems = freeItems.filter(it => it.type === 'group' || it.p !== id);
   freeItems.forEach(it => { if (it.type === 'group') it.sub.forEach(sc => { if (sc.p === id) { sc.p = null; sc.crop = null; } }); });
   cells.forEach(c => { if (c.p === id) { c.p = null; c.zoom = 1; c.ox = 0; c.oy = 0; c.crop = null; } });
+  if (splitSrc === id) { splitSrc = null; splitCrop = null; }
   selCell = -1; selFree = -1; selStrip = -1;
   hidePop();
   updateSidebar(); renderTray(); render();
@@ -1344,6 +1397,7 @@ canvas.addEventListener('drop', e => {
   if (dragPhotoId == null) return;
   e.preventDefault();
   const pt = toCanvas(e);
+  if (mode === 'split') { setSplitSource(dragPhotoId); dragPhotoId = null; return; }
   if (mode === 'strip') {
     // 按拖放位置插入长图序列（拖到某块中点之前就排在它前面）；若已在序列中则移动到该位置
     const rects = stripRects(canvas.width, canvas.height);
@@ -1430,6 +1484,12 @@ canvas.addEventListener('pointerdown', e => {
   const pt = toCanvas(e);
   downClient = { x: e.clientX, y: e.clientY };
   canvas.setPointerCapture(e.pointerId);
+  if (mode === 'split') {
+    // 命中分割线 → 拖线；否则拖空白处滚动长图
+    drag = splitHit(pt, canvas.width / canvas.getBoundingClientRect().width)
+      || { type:'splitpan', x:e.clientX, y:e.clientY, sl:stage.scrollLeft, st:stage.scrollTop };
+    return;
+  }
   if (mode === 'template') {
     const rects = cellRects(canvas.width, canvas.height);
     const i = rects.findIndex(r => pointInShape(r, pt));
@@ -1488,6 +1548,7 @@ function toLocal(pt, it) {
   return { x: dx*c - dy*s, y: dx*s + dy*c };
 }
 canvas.addEventListener('pointermove', e => {
+  if (mode === 'split') { splitPointerMove(e, toCanvas(e)); return; }
   if (!drag) return;
   const pt = toCanvas(e);
   if (drag.type === 'pan') {
@@ -1539,6 +1600,7 @@ canvas.addEventListener('pointermove', e => {
 canvas.addEventListener('pointerup', e => {
   const d = drag;
   drag = null;
+  if (mode === 'split') { downClient = null; return; }
   // 拖到别的格子 → 交换两格内容（拖到空格即移过去）
   if (d && d.type === 'pan' && swapTarget >= 0 && swapTarget !== d.i) {
     const tmp = cells[d.i]; cells[d.i] = cells[swapTarget]; cells[swapTarget] = tmp;
@@ -1559,7 +1621,7 @@ canvas.addEventListener('pointerup', e => {
     showPop(e.clientX, e.clientY, [
       [t('popCrop'), () => openCellCrop(i)],
       [t('popCutout'), () => openCellCut(i)],
-      [t('popSplit'), () => { const ph = photoById(cells[i].p); if (ph) openSplit(ph.img, cells[i].crop); }],
+      [t('popSplit'), () => { const ph = photoById(cells[i].p); if (ph) openSplit(ph.id, cells[i].crop); }],
       [t('popRemove'), () => { cells[i] = { p:null, zoom:1, ox:0, oy:0, crop:null }; selCell = -1; updateSidebar(); render(); }],
     ]);
   } else if (mode === 'template' && selCell >= 0 && cells[selCell] && cells[selCell].p == null) {
@@ -1577,7 +1639,7 @@ canvas.addEventListener('pointerup', e => {
       if (k >= 0 && it.sub[k] && it.sub[k].p != null) {
         btns.push([t('popCrop'), () => openGroupCrop(i, k)]);
         btns.push([t('popCutout'), () => openGroupCut(i, k)]);
-        btns.push([t('popSplit'), () => { const sc = it.sub[k], ph = sc && photoById(sc.p); if (ph) openSplit(ph.img, sc.crop); }]);
+        btns.push([t('popSplit'), () => { const sc = it.sub[k], ph = sc && photoById(sc.p); if (ph) openSplit(ph.id, sc.crop); }]);
         btns.push([t('popCellClear'), () => { it.sub[k] = { p:null, crop:null, text:null }; render(); }]);
       }
       btns.push([t('popDelGroup'), () => { freeItems.splice(i, 1); selFree = -1; updateSidebar(); render(); }]);
@@ -1586,7 +1648,7 @@ canvas.addEventListener('pointerup', e => {
       showPop(e.clientX, e.clientY, [
         [t('popCrop'), () => openFreeCrop(i)],
         [t('popCutout'), () => openFreeCut(i)],
-        [t('popSplit'), () => { const ph = photoById(it.p); if (ph) openSplit(ph.img, it.crop); }],
+        [t('popSplit'), () => { const ph = photoById(it.p); if (ph) openSplit(ph.id, it.crop); }],
         [t('popDelete'), () => { freeItems.splice(i, 1); selFree = -1; updateSidebar(); render(); }],
       ]);
     }
@@ -1595,7 +1657,7 @@ canvas.addEventListener('pointerup', e => {
     showPop(e.clientX, e.clientY, [
       [t('popCrop'), () => openStripCrop(i)],
       [t('popCutout'), () => openStripCut(i)],
-      [t('popSplit'), () => { const id = stripOrder[i], ph = photoById(id); if (ph) openSplit(ph.img, stripCrops[id]); }],
+      [t('popSplit'), () => { const id = stripOrder[i], ph = photoById(id); if (ph) openSplit(ph.id, stripCrops[id]); }],
       [t('popUp'), () => {
         if (i > 0) { [stripOrder[i-1], stripOrder[i]] = [stripOrder[i], stripOrder[i-1]]; selStrip = i-1; renderTray(); render(); }
       }],
@@ -1890,155 +1952,247 @@ document.getElementById('cropOk').onclick = () => {
   fn(crop);
 };
 
-// ---------- 分割图片（按行×列切成多张，可拖动分割线；下载 ZIP 或存入图片库） ----------
-const splitModal = document.getElementById('splitModal');
-const splitCanvas = document.getElementById('splitCanvas');
-const spx = splitCanvas.getContext('2d');
-const splitView = document.getElementById('splitView');
-let sp = null;        // {img, cr:{sx,sy,sw,sh}, xs:[0..1], ys:[0..1]} 分割线位置为 0~1 比例
-let spDrag = null;    // {axis:'x'|'y', i} 拖分割线；{pan:true,...} 拖空白处滚动预览
-let spDir = 'v';      // 按张数切时的方向：v 上下切，h 左右切
+// ---------- 分割模式（第 4 种模式：在主画布上切图，按张数 / 按比例 / 宫格，可智能避开文字） ----------
+let splitSrc = null, splitCrop = null;      // 源图 id 与可选裁剪区域
+let splitMethod = 'count', splitDir = 'v', splitSmart = true;
+let splitCount = 3, splitRows = 3, splitCols = 3, splitRatio = '3:4';
+let splitXs = [0, 1], splitYs = [0, 1];     // 分割线位置（0~1 比例）
+let splitProf = null;                       // 智能切割用的行/列“起伏度”缓存
+let splitFlash = '', splitFlashTimer = 0;
 function evenCuts(n) { return Array.from({ length: n + 1 }, (_, i) => i / n); }
-function clampRC(v) { return Math.max(1, Math.min(50, Math.round(+v) || 1)); }
-function openSplit(img, crop) {
-  const cr = crop || { sx:0, sy:0, sw:img.width, sh:img.height };
-  const maxW = Math.min(innerWidth * 0.9, 1000), maxH = innerHeight * 0.58;
-  let s = Math.min(maxW / cr.sw, maxH / cr.sh);
-  if (cr.sw * s < Math.min(360, maxW)) s = Math.min(360, maxW) / cr.sw;   // 竖长图：保证预览宽度，纵向滚动
-  if (cr.sh * s < Math.min(240, maxH)) s = Math.min(240, maxH) / cr.sh;   // 横长图：保证预览高度，横向滚动
-  s = Math.min(s, 16000 / Math.max(cr.sw, cr.sh));                        // 防止预览画布超出浏览器上限
-  splitCanvas.width = Math.max(1, Math.round(cr.sw * s));
-  splitCanvas.height = Math.max(1, Math.round(cr.sh * s));
-  sp = { img, cr, xs: null, ys: null };
-  splitModal.classList.add('show');
-  splitView.scrollTop = 0; splitView.scrollLeft = 0;
-  // 长图默认按张数切：竖长图每张约 3:4，横长图每张约 1:1，可再自行改张数
-  const ar = cr.sh / cr.sw;
-  if (ar >= 2) { spDir = 'v'; setSplitCount(Math.round(ar * 3 / 4)); }
-  else if (ar <= 0.5) { spDir = 'h'; setSplitCount(Math.round(1 / ar)); }
-  else setSplitGrid(document.getElementById('splitRows').value, document.getElementById('splitCols').value);
+function clampInt(v, lo, hi) { return Math.max(lo, Math.min(hi, Math.round(+v) || lo)); }
+function splitSource() {
+  const ph = splitSrc != null ? photoById(splitSrc) : null;
+  if (!ph) return null;
+  return { ph, img: ph.img, cr: splitCrop || { sx:0, sy:0, sw:ph.img.width, sh:ph.img.height } };
 }
-function setSplitCount(n) { n = clampRC(n); if (spDir === 'v') setSplitGrid(n, 1); else setSplitGrid(1, n); }
-function closeSplit() { splitModal.classList.remove('show'); sp = null; spDrag = null; }
-function setSplitGrid(r, c) {
-  if (!sp) return;
-  r = clampRC(r); c = clampRC(c);
-  document.getElementById('splitRows').value = r;
-  document.getElementById('splitCols').value = c;
-  sp.ys = evenCuts(r); sp.xs = evenCuts(c);
-  drawSplit();
+// 预览画布尺寸：限制总像素，避免超长图超出手机浏览器画布上限（导出时仍用原图像素）
+function splitPreviewSize() {
+  const s = splitSource();
+  if (!s) return [900, 600];
+  const { sw, sh } = s.cr;
+  const k = Math.min(1, Math.sqrt(8e6 / (sw * sh)), 16000 / Math.max(sw, sh));
+  return [Math.max(1, Math.round(sw * k)), Math.max(1, Math.round(sh * k))];
+}
+function setSplitSource(id, crop) {
+  splitSrc = id; splitCrop = crop || null; splitProf = null;
+  const s = splitSource();
+  if (s) {
+    // 按图片形状给默认值：竖图上下切，横图左右切；长图默认每张约 3:4 / 1:1
+    const ar = s.cr.sh / s.cr.sw;
+    splitDir = ar >= 1 ? 'v' : 'h';
+    if (ar >= 2) splitCount = clampInt(ar * 3 / 4, 2, 50);
+    else if (ar <= 0.5) splitCount = clampInt(1 / ar, 2, 50);
+  }
+  stage.scrollTop = 0; stage.scrollLeft = 0;
+  renderLibrary();
+  layoutSplit();
+}
+// 从其它模式的弹出菜单跳到分割模式
+function openSplit(id, crop) { setSplitSource(id, crop); setMode('split'); }
+// 按比例：每张固定宽高比，最后一张是余下部分（太窄就并入上一张）
+function ratioCuts(len, piece) {
+  const full = Math.floor(len / piece), rem = len / piece - full;
+  if (full < 1) return [0, 1];
+  const cuts = [0];
+  for (let i = 1; i <= full; i++) cuts.push(Math.min(1, i * piece / len));
+  if (rem < 0.15) cuts[cuts.length - 1] = 1; else cuts.push(1);
+  return cuts;
+}
+function layoutSplit() {
+  const s = splitSource();
+  splitXs = [0, 1]; splitYs = [0, 1];
+  if (s) {
+    const { sw, sh } = s.cr;
+    if (splitMethod === 'grid') { splitYs = evenCuts(splitRows); splitXs = evenCuts(splitCols); }
+    else if (splitMethod === 'count') { if (splitDir === 'v') splitYs = evenCuts(splitCount); else splitXs = evenCuts(splitCount); }
+    else {
+      const [rw, rh] = splitRatio.split(':').map(Number);
+      if (splitDir === 'v') splitYs = ratioCuts(sh, sw * rh / rw); else splitXs = ratioCuts(sw, sh * rw / rh);
+    }
+    // 宫格保持严格等分，只有按张数/按比例才智能避开文字
+    if (splitSmart && splitMethod !== 'grid') { const p = splitProfiles(s); splitYs = snapCuts(splitYs, p.rows); splitXs = snapCuts(splitXs, p.cols); }
+  }
+  updateSidebar(); render();
+}
+// 每一行（列）的亮度标准差：空白/纯色行≈0，有文字或图案的行较大
+function splitProfiles(s) {
+  const key = s.ph.id + ':' + s.cr.sx + ',' + s.cr.sy + ',' + s.cr.sw + ',' + s.cr.sh;
+  if (splitProf && splitProf.key === key) return splitProf;
+  const { img, cr } = s;
+  const prof = (w, h, alongRows) => {
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const c = cv.getContext('2d', { willReadFrequently:true });
+    c.fillStyle = '#fff'; c.fillRect(0, 0, w, h);
+    c.drawImage(img, cr.sx, cr.sy, cr.sw, cr.sh, 0, 0, w, h);
+    const d = c.getImageData(0, 0, w, h).data;
+    const n = alongRows ? h : w, m = alongRows ? w : h, raw = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      let sum = 0, sum2 = 0;
+      for (let j = 0; j < m; j++) {
+        const p = ((alongRows ? i : j) * w + (alongRows ? j : i)) * 4;
+        const L = 0.299*d[p] + 0.587*d[p+1] + 0.114*d[p+2];
+        sum += L; sum2 += L * L;
+      }
+      const mean = sum / m;
+      raw[i] = Math.sqrt(Math.max(0, sum2 / m - mean * mean));
+    }
+    // 取相邻 ±2 行最大值：保证切线上下一小段都是空白
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) { let mx = 0; for (let k = Math.max(0, i-2); k <= Math.min(n-1, i+2); k++) mx = Math.max(mx, raw[k]); out[i] = mx; }
+    return out;
+  };
+  splitProf = {
+    key,
+    rows: prof(Math.max(1, Math.min(cr.sw, 240)), Math.max(1, Math.min(cr.sh, 6000)), true),
+    cols: prof(Math.max(1, Math.min(cr.sw, 6000)), Math.max(1, Math.min(cr.sh, 240)), false),
+  };
+  return splitProf;
+}
+// 把每条分割线挪到附近最“空”的位置（空白区的中间）；附近没有明显空白就不动，照片类图片保持均分
+function snapCuts(cuts, prof) {
+  if (cuts.length <= 2) return cuts;
+  const n = prof.length, out = cuts.slice(), FLAT = 3;
+  for (let i = 1; i < cuts.length - 1; i++) {
+    const gap = Math.min(cuts[i] - out[i-1], cuts[i+1] - cuts[i]);
+    const j0 = Math.min(n - 1, Math.round(cuts[i] * n)), win = Math.max(1, Math.round(gap * 0.2 * n));
+    const lo = Math.max(1, j0 - win), hi = Math.min(n - 2, j0 + win);
+    let best = j0, bestScore = Infinity;
+    for (let j = lo; j <= hi; j++) {
+      const sc = prof[j] + 2 * Math.abs(j - j0) / win;
+      if (sc < bestScore) { bestScore = sc; best = j; }
+    }
+    if (prof[best] < FLAT) {
+      let a = best, b = best;                       // 落在空白带里 → 取这段空白的中间
+      while (a > lo && prof[a-1] < FLAT) a--;
+      while (b < hi && prof[b+1] < FLAT) b++;
+      out[i] = ((a + b) / 2 + 0.5) / n;
+    } else if (prof[best] < prof[j0] * 0.5) out[i] = (best + 0.5) / n;
+  }
+  return out;
 }
 // 分割线换算成原图像素边界
 function splitEdges() {
-  const { cr } = sp;
+  const { cr } = splitSource();
   return {
-    xs: sp.xs.map(f => cr.sx + Math.round(f * cr.sw)),
-    ys: sp.ys.map(f => cr.sy + Math.round(f * cr.sh)),
+    xs: splitXs.map(f => cr.sx + Math.round(f * cr.sw)),
+    ys: splitYs.map(f => cr.sy + Math.round(f * cr.sh)),
   };
 }
-function drawSplit() {
-  if (!sp) return;
-  const W = splitCanvas.width, H = splitCanvas.height, { img, cr, xs, ys } = sp;
-  spx.clearRect(0, 0, W, H);
-  spx.drawImage(img, cr.sx, cr.sy, cr.sw, cr.sh, 0, 0, W, H);
-  // 分割线：深色描边 + 白线，保证在任何图上都看得清
-  const line = (x1, y1, x2, y2) => {
-    spx.beginPath(); spx.moveTo(x1, y1); spx.lineTo(x2, y2);
-    spx.strokeStyle = 'rgba(0,0,0,.45)'; spx.lineWidth = 4; spx.stroke();
-    spx.strokeStyle = '#ffffff'; spx.lineWidth = 2; spx.stroke();
-  };
-  for (let i = 1; i < xs.length - 1; i++) line(xs[i]*W, 0, xs[i]*W, H);
-  for (let i = 1; i < ys.length - 1; i++) line(0, ys[i]*H, W, ys[i]*H);
-  // 拖动手柄
-  spx.fillStyle = '#4f7cff'; spx.strokeStyle = '#fff'; spx.lineWidth = 2;
-  for (let i = 1; i < xs.length - 1; i++) { spx.beginPath(); spx.arc(xs[i]*W, H/2, 8, 0, 7); spx.fill(); spx.stroke(); }
-  for (let i = 1; i < ys.length - 1; i++) { spx.beginPath(); spx.arc(W/2, ys[i]*H, 8, 0, 7); spx.fill(); spx.stroke(); }
-  // 编号（从左到右、从上到下）
-  const rows = ys.length - 1, cols = xs.length - 1;
-  const fs = Math.max(11, Math.min(18, Math.min(W / cols, H / rows) / 6));
-  spx.font = `700 ${fs}px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif`;
-  spx.textAlign = 'center'; spx.textBaseline = 'middle';
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-    if (Math.min((xs[c+1] - xs[c]) * W, (ys[r+1] - ys[r]) * H) < fs * 2.2) continue;   // 太窄放不下编号
-    const cx = (xs[c] + xs[c+1]) / 2 * W, cy = (ys[r] + ys[r+1]) / 2 * H, rr = fs * 0.95;
-    spx.fillStyle = 'rgba(0,0,0,.55)';
-    spx.beginPath(); spx.arc(cx, cy, rr, 0, 7); spx.fill();
-    spx.fillStyle = '#fff'; spx.fillText(String(r * cols + c + 1), cx, cy + 0.5);
+function renderSplitScene(c, W, H) {
+  const s = splitSource();
+  if (!s) {
+    c.fillStyle = '#f0f1f3'; c.fillRect(0, 0, W, H);
+    c.fillStyle = '#a0a4ae'; c.font = '26px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(t('splitNoSrc'), W/2, H/2);
+    return;
   }
-  // 信息：张数 + （尺寸一致时）每张像素
-  const e = splitEdges();
-  const ws = new Set(), hs = new Set();
-  for (let c = 0; c < cols; c++) ws.add(e.xs[c+1] - e.xs[c]);
-  for (let r = 0; r < rows; r++) hs.add(e.ys[r+1] - e.ys[r]);
-  const sz = ws.size === 1 && hs.size === 1 ? `${[...ws][0]} × ${[...hs][0]}` : '';
-  document.getElementById('splitInfo').textContent = t('splitInfo')(rows * cols, sz);
-  document.getElementById('splitDl').textContent = rows * cols > 1 ? t('splitDl') : t('splitDl1');
-  document.querySelectorAll('#splitPresets button').forEach(b => b.classList.toggle('active', b.dataset.rc === `${rows},${cols}`));
-  // 同步“张数 + 方向”
-  if (cols === 1 && rows > 1) spDir = 'v';
-  else if (rows === 1 && cols > 1) spDir = 'h';
-  document.getElementById('splitCount').value = rows * cols;
-  document.querySelectorAll('#splitDir button').forEach(b => b.classList.toggle('active', b.dataset.sdir === spDir));
+  c.drawImage(s.img, s.cr.sx, s.cr.sy, s.cr.sw, s.cr.sh, 0, 0, W, H);
+  const k = W / Math.max(1, parseFloat(canvas.style.width) || W);   // 1 个屏幕像素对应的画布像素，保证线条粗细在屏幕上一致
+  const line = (x1, y1, x2, y2) => {
+    c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2);
+    c.strokeStyle = 'rgba(0,0,0,.45)'; c.lineWidth = 4*k; c.stroke();
+    c.setLineDash([10*k, 6*k]); c.strokeStyle = '#ffffff'; c.lineWidth = 2*k; c.stroke(); c.setLineDash([]);
+  };
+  for (let i = 1; i < splitXs.length - 1; i++) line(splitXs[i]*W, 0, splitXs[i]*W, H);
+  for (let i = 1; i < splitYs.length - 1; i++) line(0, splitYs[i]*H, W, splitYs[i]*H);
+  const rows = splitYs.length - 1, cols = splitXs.length - 1;
+  // 编号（从左到右、从上到下）
+  c.font = `700 ${13*k}px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif`;
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) {
+    const pw = (splitXs[q+1] - splitXs[q]) * W, ph = (splitYs[r+1] - splitYs[r]) * H;
+    if (Math.min(pw, ph) < 30*k || rows * cols === 1) continue;
+    const cx = splitXs[q]*W + 20*k, cy = splitYs[r]*H + 20*k;   // 编号放在每块左上角，不挡内容
+    c.fillStyle = 'rgba(20,24,35,.62)'; c.beginPath(); c.arc(cx, cy, 13*k, 0, 7); c.fill();
+    c.fillStyle = '#fff'; c.fillText(String(r * cols + q + 1), cx, cy + k);
+  }
+  // 拖动手柄
+  c.fillStyle = '#4f7cff'; c.strokeStyle = '#fff'; c.lineWidth = 2*k;
+  // 手柄放在当前可视区域的中线上，长图滚到哪都能抓到
+  const cb = canvas.getBoundingClientRect(), sb = stage.getBoundingClientRect();
+  const hx = cb.width ? Math.min(W - 16*k, Math.max(16*k, (sb.left + sb.width/2 - cb.left) * k)) : W/2;
+  const hy = cb.height ? Math.min(H - 16*k, Math.max(16*k, (sb.top + sb.height/2 - cb.top) * k)) : H/2;
+  for (let i = 1; i < splitXs.length - 1; i++) { c.beginPath(); c.arc(splitXs[i]*W, hy, 8*k, 0, 7); c.fill(); c.stroke(); }
+  for (let i = 1; i < splitYs.length - 1; i++) { c.beginPath(); c.arc(hx, splitYs[i]*H, 8*k, 0, 7); c.fill(); c.stroke(); }
 }
-function splitPt(e) {
-  const b = splitCanvas.getBoundingClientRect();
-  return { x: (e.clientX - b.left) * splitCanvas.width / b.width, y: (e.clientY - b.top) * splitCanvas.height / b.height, k: splitCanvas.width / b.width };
-}
-function splitHit(p) {
-  const W = splitCanvas.width, H = splitCanvas.height;
-  let best = null, bd = 14 * p.k;
-  for (let i = 1; i < sp.xs.length - 1; i++) { const d = Math.abs(p.x - sp.xs[i]*W); if (d < bd) { bd = d; best = { axis:'x', i }; } }
-  for (let i = 1; i < sp.ys.length - 1; i++) { const d = Math.abs(p.y - sp.ys[i]*H); if (d < bd) { bd = d; best = { axis:'y', i }; } }
+function splitHit(pt, k) {
+  if (!splitSource()) return null;
+  const W = canvas.width, H = canvas.height;
+  let best = null, bd = 14 * k;
+  for (let i = 1; i < splitXs.length - 1; i++) { const d = Math.abs(pt.x - splitXs[i]*W); if (d < bd) { bd = d; best = { type:'splitline', axis:'x', i }; } }
+  for (let i = 1; i < splitYs.length - 1; i++) { const d = Math.abs(pt.y - splitYs[i]*H); if (d < bd) { bd = d; best = { type:'splitline', axis:'y', i }; } }
   return best;
 }
-splitCanvas.addEventListener('pointerdown', e => {
-  if (!sp) return;
-  spDrag = splitHit(splitPt(e))
-    || { pan:true, x:e.clientX, y:e.clientY, sl:splitView.scrollLeft, st:splitView.scrollTop };
-  splitCanvas.setPointerCapture(e.pointerId);
-});
-splitCanvas.addEventListener('pointermove', e => {
-  if (!sp) return;
-  const p = splitPt(e);
-  if (!spDrag) {
-    const h = splitHit(p);
-    const scrollable = splitView.scrollHeight > splitView.clientHeight || splitView.scrollWidth > splitView.clientWidth;
-    splitCanvas.style.cursor = h ? (h.axis === 'x' ? 'ew-resize' : 'ns-resize') : (scrollable ? 'grab' : 'default');
+function splitPointerMove(e, pt) {
+  if (!drag) {
+    const h = splitHit(pt, canvas.width / canvas.getBoundingClientRect().width);
+    const scrollable = stage.scrollHeight > stage.clientHeight + 1 || stage.scrollWidth > stage.clientWidth + 1;
+    canvas.style.cursor = h ? (h.axis === 'x' ? 'ew-resize' : 'ns-resize') : (scrollable ? 'grab' : 'default');
     return;
   }
-  if (spDrag.pan) {
-    splitView.scrollLeft = spDrag.sl - (e.clientX - spDrag.x);
-    splitView.scrollTop = spDrag.st - (e.clientY - spDrag.y);
+  if (drag.type === 'splitpan') {
+    stage.scrollLeft = drag.sl - (e.clientX - drag.x);
+    stage.scrollTop = drag.st - (e.clientY - drag.y);
+    render();
     return;
   }
-  const arr = spDrag.axis === 'x' ? sp.xs : sp.ys, i = spDrag.i, MIN = 0.02;
-  const f = spDrag.axis === 'x' ? p.x / splitCanvas.width : p.y / splitCanvas.height;
+  const arr = drag.axis === 'x' ? splitXs : splitYs, i = drag.i, MIN = 0.01;
+  const f = drag.axis === 'x' ? pt.x / canvas.width : pt.y / canvas.height;
   arr[i] = Math.max(arr[i-1] + MIN, Math.min(arr[i+1] - MIN, f));
-  drawSplit();
+  updateSplitPanel(); render();
+}
+stage.addEventListener('scroll', () => { if (mode === 'split') render(); });   // 手柄跟随可视区域
+function setVal(id, v) { const el = document.getElementById(id); if (el !== document.activeElement) el.value = v; }
+function updateSplitPanel() {
+  const s = splitSource();
+  const box = document.getElementById('splitSrcBox');
+  box.innerHTML = s ? `<img src="${s.ph.url}"><span>${s.cr.sw} × ${s.cr.sh} px</span>` : `<span>${t('splitNoSrc')}</span>`;
+  document.querySelectorAll('#splitMethodTabs button').forEach(b => b.classList.toggle('active', b.dataset.sm === splitMethod));
+  document.querySelectorAll('#splitDirTabs button').forEach(b => b.classList.toggle('active', b.dataset.sdir === splitDir));
+  document.getElementById('smCountRow').classList.toggle('hidden', splitMethod !== 'count');
+  document.getElementById('smRatioRow').classList.toggle('hidden', splitMethod !== 'ratio');
+  document.getElementById('smGridRow').classList.toggle('hidden', splitMethod !== 'grid');
+  document.getElementById('splitDirTabs').classList.toggle('hidden', splitMethod === 'grid');
+  document.querySelector('.split-smart').classList.toggle('hidden', splitMethod === 'grid');
+  setVal('splitCount', splitCount); setVal('splitRows', splitRows); setVal('splitCols', splitCols);
+  document.getElementById('splitRatioSel').value = splitRatio;
+  document.getElementById('splitSmart').checked = splitSmart;
+  document.querySelectorAll('#splitPresets button').forEach(b => b.classList.toggle('active', b.dataset.rc === `${splitRows},${splitCols}`));
+  const info = document.getElementById('splitInfo');
+  if (splitFlash) { info.textContent = splitFlash; return; }
+  if (!s) { info.textContent = ''; return; }
+  const e = splitEdges(), ws = new Set(), hs = new Set();
+  for (let q = 0; q < e.xs.length - 1; q++) ws.add(e.xs[q+1] - e.xs[q]);
+  for (let r = 0; r < e.ys.length - 1; r++) hs.add(e.ys[r+1] - e.ys[r]);
+  const n = (e.xs.length - 1) * (e.ys.length - 1);
+  info.textContent = t('splitInfo')(n, ws.size === 1 && hs.size === 1 ? t('splitSizeEach')([...ws][0], [...hs][0]) : t('splitSizeVar'));
+}
+document.querySelectorAll('#splitMethodTabs button').forEach(b => { b.onclick = () => { splitMethod = b.dataset.sm; layoutSplit(); }; });
+document.querySelectorAll('#splitDirTabs button').forEach(b => { b.onclick = () => { splitDir = b.dataset.sdir; layoutSplit(); }; });
+document.getElementById('splitCount').oninput = e => { if (e.target.value !== '') { splitCount = clampInt(e.target.value, 1, 50); layoutSplit(); } };
+document.getElementById('splitCount').onblur = () => updateSplitPanel();
+document.querySelectorAll('#smCountRow [data-step]').forEach(b => {
+  b.onclick = ev => { ev.preventDefault(); splitCount = clampInt(splitCount + +b.dataset.step, 1, 50); layoutSplit(); };
 });
-const spEnd = () => spDrag = null;
-splitCanvas.addEventListener('pointerup', spEnd);
-splitCanvas.addEventListener('pointercancel', spEnd);
-document.getElementById('splitRows').oninput = e => { if (e.target.value !== '') setSplitGrid(e.target.value, document.getElementById('splitCols').value); };
-document.getElementById('splitCols').oninput = e => { if (e.target.value !== '') setSplitGrid(document.getElementById('splitRows').value, e.target.value); };
-document.getElementById('splitCount').oninput = e => { if (e.target.value !== '') setSplitCount(e.target.value); };
-document.querySelectorAll('#splitDir button').forEach(b => {
-  b.onclick = () => { spDir = b.dataset.sdir; setSplitCount(document.getElementById('splitCount').value); };
-});
+document.getElementById('splitRows').oninput = e => { if (e.target.value !== '') { splitRows = clampInt(e.target.value, 1, 20); layoutSplit(); } };
+document.getElementById('splitCols').oninput = e => { if (e.target.value !== '') { splitCols = clampInt(e.target.value, 1, 20); layoutSplit(); } };
 document.querySelectorAll('#splitPresets button').forEach(b => {
-  b.onclick = () => { const [r, c] = b.dataset.rc.split(','); setSplitGrid(r, c); };
+  b.onclick = () => { [splitRows, splitCols] = b.dataset.rc.split(',').map(Number); layoutSplit(); };
 });
-document.getElementById('splitEven').onclick = () => { if (sp) setSplitGrid(sp.ys.length - 1, sp.xs.length - 1); };
-document.getElementById('splitCancel').onclick = closeSplit;
+document.getElementById('splitRatioSel').onchange = e => { splitRatio = e.target.value; layoutSplit(); };
+document.getElementById('splitSmart').onchange = e => { splitSmart = e.target.checked; layoutSplit(); };
+document.getElementById('splitResetBtn').onclick = () => layoutSplit();
 // 按当前分割线切出每一块（行优先顺序），返回 [{r, c, cv}]
 function splitPieces(fmt) {
-  const e = splitEdges(), out = [];
+  const s = splitSource(), e = splitEdges(), out = [];
   for (let r = 0; r < e.ys.length - 1; r++) for (let c = 0; c < e.xs.length - 1; c++) {
     const sx = e.xs[c], sy = e.ys[r], w = Math.max(1, e.xs[c+1] - sx), h = Math.max(1, e.ys[r+1] - sy);
     const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
     const c2 = cv.getContext('2d');
     if (fmt === 'jpg') { c2.fillStyle = '#ffffff'; c2.fillRect(0, 0, w, h); }  // JPG 无透明，补白底
-    c2.drawImage(sp.img, sx, sy, w, h, 0, 0, w, h);
+    c2.drawImage(s.img, sx, sy, w, h, 0, 0, w, h);
     out.push({ r, c, cv });
   }
   return out;
@@ -2090,23 +2244,21 @@ function downloadBlob(blob, name) {
   a.href = URL.createObjectURL(blob); a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
-document.getElementById('splitDl').onclick = async () => {
-  if (!sp) return;
+async function splitDownload() {
+  if (!splitSource()) { alert(t('splitNoSrc')); return; }
   const fmt = document.getElementById('fmtSel').value;
   const pieces = splitPieces(fmt), stamp = Date.now();
-  const rows = sp.ys.length - 1, cols = sp.xs.length - 1;
   if (pieces.length === 1) { downloadBlob(await canvasBlob(pieces[0].cv, fmt), `split_${stamp}.${fmt}`); return; }
   const pad = String(pieces.length).length;
   const files = await Promise.all(pieces.map(async (p, i) => ({
     name: `${String(i + 1).padStart(pad, '0')}_r${p.r + 1}c${p.c + 1}.${fmt}`,
     data: new Uint8Array(await (await canvasBlob(p.cv, fmt)).arrayBuffer()),
   })));
-  downloadBlob(makeZip(files), `split_${rows}x${cols}_${stamp}.zip`);
-};
-document.getElementById('splitLib').onclick = async () => {
-  if (!sp) return;
+  downloadBlob(makeZip(files), `split_${pieces.length}_${stamp}.zip`);
+}
+async function splitToLibrary() {
+  if (!splitSource()) { alert(t('splitNoSrc')); return; }
   const pieces = splitPieces('png');
-  closeSplit();
   // 等全部加载完再按顺序加入，保证图片库里的顺序 = 分割编号
   const loaded = await Promise.all(pieces.map(async p => {
     const url = URL.createObjectURL(await canvasBlob(p.cv, 'png'));
@@ -2115,19 +2267,11 @@ document.getElementById('splitLib').onclick = async () => {
     return { img, url };
   }));
   loaded.forEach(({ img, url }) => photos.push({ id: nextId++, img, url }));
-  renderTray(); render();
-};
-// 侧栏“分割图片”：选一张图 → 加入图片库并打开分割
-document.getElementById('splitBtn').onclick = () => document.getElementById('splitInput').click();
-document.getElementById('splitInput').onchange = e => {
-  const f = e.target.files[0];
-  e.target.value = '';
-  if (!f || !f.type.startsWith('image/')) return;
-  const url = URL.createObjectURL(f);
-  const img = new Image();
-  img.onload = () => { photos.push({ id: nextId++, img, url }); renderTray(); openSplit(img); };
-  img.src = url;
-};
+  splitFlash = t('splitSaved')(loaded.length);
+  clearTimeout(splitFlashTimer);
+  splitFlashTimer = setTimeout(() => { splitFlash = ''; updateSplitPanel(); }, 2500);
+  renderTray(); updateSidebar();
+}
 
 // ---------- 自由模式按钮 ----------
 document.getElementById('cropFreeBtn').onclick = () => { if (selFree >= 0) openFreeCrop(selFree); };
@@ -2152,7 +2296,6 @@ window.addEventListener('keydown', e => {
   }
   if (e.key === 'Escape' && cm) { cropModal.classList.remove('show'); cm = null; }
   if (e.key === 'Escape' && cutState) { cutModal.classList.remove('show'); cutState = null; }
-  if (e.key === 'Escape' && sp) closeSplit();
 });
 
 // ---------- 导出 ----------
@@ -2180,6 +2323,7 @@ function addComposedToLibrary() {
 }
 document.getElementById('exportBtn').onclick = () => {
   if (!photos.length) { alert(t('alertNoPhoto')); return; }
+  if (mode === 'split') { splitDownload(); return; }
   const fmt = document.getElementById('fmtSel').value;
   const off = composeCanvas(fmt);
   const a = document.createElement('a');
@@ -2190,13 +2334,14 @@ document.getElementById('exportBtn').onclick = () => {
 };
 document.getElementById('saveLibBtn').onclick = () => {
   if (!photos.length) { alert(t('alertNoPhoto')); return; }
+  if (mode === 'split') { splitToLibrary(); return; }
   addComposedToLibrary();
 };
 document.getElementById('clearBtn').onclick = () => {
   if (!photos.length || confirm(t('confirmClear'))) {
     photos.forEach(p => URL.revokeObjectURL(p.url));
     photos = []; freeItems = []; stripOrder = []; stripCrops = {};
-    pages = 1; customSize = null;
+    pages = 1; customSize = null; splitSrc = null; splitCrop = null;
     selStrip = -1;
     initCells(); renderTray(); render();
   }
@@ -2210,7 +2355,7 @@ document.querySelectorAll('#langSw button').forEach(b => {
 // ---------- 手机底部标签栏（布局 / 样式 / 导出） ----------
 let mPanel = 'layout';
 const M_GROUPS = {
-  layout: ['secTpl','secAspect','secFreeTpl','secPages','secStrip','secCell','secFree'],
+  layout: ['secTpl','secAspect','secFreeTpl','secPages','secStrip','secSplit','secCell','secFree'],
   style:  ['secStyle'],
   export: ['secExport'],
 };
