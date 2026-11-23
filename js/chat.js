@@ -79,8 +79,9 @@ function draw(){
   if(full){
     if(wc||dy)box(0,0,390,header,0,wc?'rgba(244,244,244,.94)':'rgba(212,226,242,.45)');
     text('14:18',46,35,'#080808',16,true);
-    for(let i=0;i<4;i++)box(277+5*i,32-i*2,3,3+i*2,1,'black');
-    text('◒',301,35,'black',16);box(326,23,26,12,4,'#aaa');box(326,23,13,12,3,'black');box(353,26,2,5,1,'#aaa');
+    asset('status-signal',277,22,58/3,37/3);
+    asset('status-wifi',302.5,22,52/3,37/3);
+    asset('status-battery',326.5,22,82/3,39/3);
     text('‹',wc?14:17,header-12,'#181818',31);
     if(wc)center(group||people.peer.name,header-13,'#191919',16);
     else {avatar('peer',ig?66:40,header-42,31,16);text(people.peer.name,ig?104:81,header-(ig?26:18),'#24242a',15,true,ig?116:180);
