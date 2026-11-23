@@ -179,15 +179,15 @@ function drawCrop() {
   cctx.fillRect(r.x + r.w, r.y, W - r.x - r.w, r.h);
   cctx.fillRect(0, r.y + r.h, W, H - r.y - r.h);
   // 边框 + 三分线
-  cctx.strokeStyle = '#4f8cff'; cctx.lineWidth = 2;
+  cctx.strokeStyle = ACC; cctx.lineWidth = 2;
   cctx.strokeRect(r.x, r.y, r.w, r.h);
-  cctx.strokeStyle = 'rgba(79,140,255,.35)'; cctx.lineWidth = 1;
+  cctx.strokeStyle = accA(.35); cctx.lineWidth = 1;
   for (let k = 1; k <= 2; k++) {
     cctx.beginPath(); cctx.moveTo(r.x + r.w*k/3, r.y); cctx.lineTo(r.x + r.w*k/3, r.y + r.h); cctx.stroke();
     cctx.beginPath(); cctx.moveTo(r.x, r.y + r.h*k/3); cctx.lineTo(r.x + r.w, r.y + r.h*k/3); cctx.stroke();
   }
   // 四角手柄
-  cctx.fillStyle = '#4f8cff';
+  cctx.fillStyle = ACC;
   cropCorners().forEach(c => cctx.fillRect(c.x - 7, c.y - 7, 14, 14));
 }
 function cropCorners() {

@@ -96,11 +96,11 @@ document.querySelectorAll('#langSw button').forEach(b => {
 // ---------- 手机底部标签栏（布局 / 样式 / 导出） ----------
 let mPanel = 'layout';
 const M_GROUPS = {
-  layout: ['secImport','secTpl','secAspect','secFreeTpl','secPages','secStrip','secSub','secStitch','secMockup','secSplit','secCell','secFree'],
+  layout: ['secTpl','secAspect','secFreeTpl','secPages','secStrip','secSub','secStitch','secMockup','secSplit','secCell','secFree'],
   style:  ['secStyle'],
-  export: ['secExport'],
+  export: [],
 };
-function isMobile() { return window.innerWidth <= 820; }
+function isMobile() { return window.innerWidth < 768; }
 function applyMobilePanel() {
   const mobile = isMobile();
   const allIds = [].concat(M_GROUPS.layout, M_GROUPS.style, M_GROUPS.export);
@@ -114,10 +114,11 @@ function applyMobilePanel() {
   render();
 }
 document.querySelectorAll('#mNav button').forEach(b => {
-  b.onclick = () => { mPanel = b.dataset.mpanel; applyMobilePanel(); };
+  b.onclick = () => {
+    if (b.dataset.mpanel === 'export') { toggleExportPop(true); return; }
+    mPanel = b.dataset.mpanel; applyMobilePanel();
+  };
 });
-document.getElementById('mExport').onclick = () => document.getElementById('exportBtn').click();
-document.getElementById('mImport').onclick = () => document.getElementById('fileInput').click();
 window.addEventListener('resize', applyMobilePanel);
 
 // ---------- 初始化 ----------

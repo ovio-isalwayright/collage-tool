@@ -10,37 +10,73 @@
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-<header>
-  <span class="logo"><i></i><i></i><i></i><i></i></span>
-  <h1 data-i18n="appName">拼图工具</h1>
-  <span class="hint" id="modeHint"></span>
-  <span id="sizeLabel"></span>
-  <div class="langsw" id="langSw">
-    <button data-lang="zh" class="active">中</button>
-    <button data-lang="en">EN</button>
+<header class="island" id="topbar">
+  <div class="brand">
+    <span class="logo"><i></i><i></i><i></i><i></i></span>
+    <h1 data-i18n="appName">拼图工具</h1>
   </div>
-  <button id="mImport" class="m-only" data-i18n="mImport">＋ 图片</button>
-  <button id="mExport" class="m-only" data-i18n="mExport">⬇ 导出</button>
-</header>
-<div class="main">
-  <div class="sidebar">
-    <div class="sec" id="secImport">
-      <button class="btn" id="uploadBtn" data-i18n="import">＋ 导入照片</button>
-      <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
-      <button class="btn ghost" id="vidOpenBtn" style="margin-top:9px" data-i18n="vidOpen">🎬 从视频截取</button>
-      <input type="file" id="vidInput" accept="video/*" class="hidden">
+  <nav class="tabs mode-tabs" id="modeTabs" aria-label="mode">
+      <button data-mode="template" class="active"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span data-i18n="modeTemplate">模板</span></button>
+      <button data-mode="free"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="3.5" y="6" width="10" height="8" rx="1.5"/><rect x="10.5" y="11" width="10" height="8" rx="1.5" transform="rotate(-8 15.5 15)"/></svg><span data-i18n="modeFree">自由</span></button>
+      <button data-mode="strip"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2"/><path d="M6.5 9h11M6.5 15h11"/></svg><span data-i18n="modeStrip">长图</span></button>
+      <button data-mode="split"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg><span data-i18n="modeSplit">分割</span></button>
+      <button data-mode="sub"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M7 15h4M14 15h3M7 11.5h2M12 11.5h5"/></svg><span data-i18n="modeSub">字幕</span></button>
+      <button data-mode="stitch"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="4" y="2.5" width="12" height="10" rx="1.8"/><rect x="8" y="11.5" width="12" height="10" rx="1.8"/></svg><span data-i18n="modeStitch">拼接</span></button>
+      <button data-mode="mockup"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3.5l1.7 4.8 4.8 1.7-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg><span data-i18n="modeMockup">美化</span></button>
+  </nav>
+  <div class="hdr-right">
+    <div class="langsw" id="langSw">
+      <button data-lang="zh" class="active">中</button>
+      <button data-lang="en">EN</button>
     </div>
-    <div class="sec" id="secMode">
-      <h3 data-i18n="mode">模式</h3>
-      <div class="tabs mode-tabs">
-        <button data-mode="template" class="active" data-i18n="modeTemplate">模板</button>
-        <button data-mode="free" data-i18n="modeFree">自由</button>
-        <button data-mode="strip" data-i18n="modeStrip">长图</button>
-        <button data-mode="split" data-i18n="modeSplit">分割</button>
-        <button data-mode="sub" data-i18n="modeSub">字幕</button>
-        <button data-mode="stitch" data-i18n="modeStitch">拼接</button>
-        <button data-mode="mockup" data-i18n="modeMockup">美化</button>
+    <div class="exp-wrap">
+      <button class="btn-solid" id="hdrExport" aria-haspopup="true" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M5 20h14"/></svg><span data-i18n="exportMenu">导出</span><svg class="ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
+    </div>
+  </div>
+</header>
+<div id="exportPop" class="pop-panel">
+    <div class="sec" id="secExport">
+<h3 data-i18n="exportTitle">导出</h3>
+<div class="export-card">
+  <div class="exp-grid">
+    <label class="exp-field"><span data-i18n="fmt">格式</span>
+      <select id="fmtSel"><option value="png">PNG</option><option value="jpg">JPG</option><option value="pdf">PDF</option></select>
+    </label>
+    <label class="exp-field" id="sizeField"><span data-i18n="size">尺寸</span>
+      <select id="sizeSel"><option value="1200" data-i18n="sizeStd">标准 1200px</option><option value="2400" selected data-i18n="sizeHd">高清 2400px</option><option value="4000" data-i18n="sizeUhd">超清 4000px</option></select>
+    </label>
+  </div>
+  <button class="btn primary" id="exportBtn" data-i18n="exportBtn">⬇ 导出拼图</button>
+  <button class="btn ghost" id="annExportBtn" data-i18n="annotExport">✏️ 打码/标注后导出</button>
+  <div class="btnrow">
+    <button class="btn ghost" id="saveLibBtn" data-i18n="saveLib">＋ 存入图片库</button>
+    <button class="btn ghost" id="toMockupBtn" data-i18n="toMockup">✨ 送去美化</button>
+  </div>
+</div>
+<button class="btn ghost danger" id="clearBtn" data-i18n="clearAll">清空全部</button>
+    </div>
+</div>
+<div class="main" id="mainGrid">
+  <aside class="sidebar island" id="inspector">
+    <div class="insp-head">
+      <h2 id="inspMode"></h2>
+      <p class="hint" id="modeHint"></p>
+    </div>
+    <div class="sec hidden" id="secCell">
+      <h3 data-i18n="cellTitle">选中格子</h3>
+      <label class="row"><span data-i18n="zoom">缩放</span> <input type="range" id="zoomSlider" min="20" max="300" value="100"><span class="val" id="zoomVal">1.0</span></label>
+      <input type="text" class="capt" id="captInput" data-i18n-ph="captPh" placeholder="格子标题（可留空）">
+      <p class="tip" data-i18n="cellTip">拖动格内照片调整位置，滚轮或滑块缩放，单击弹出裁剪菜单，双击清空</p>
+    </div>
+    <div class="sec hidden" id="secFree">
+      <h3 data-i18n="freeTitle">选中图片</h3>
+      <button class="btn ghost" id="cropFreeBtn" data-i18n="cropFreeBtn">✂ 裁剪这张图</button>
+      <div class="btnrow">
+        <button class="btn ghost" id="fwdBtn" data-i18n="fwd">上移层</button>
+        <button class="btn ghost" id="backBtn" data-i18n="back">下移层</button>
+        <button class="btn ghost" id="delBtn" style="color:#ff6b6b" data-i18n="del">删除</button>
       </div>
+      <p class="tip" data-i18n="freeTip">拖动移动，右下角手柄缩放，顶部手柄旋转，单击弹出裁剪菜单</p>
     </div>
     <div class="sec" id="secTpl">
       <h3 data-i18n="chooseTpl">选择模板</h3>
@@ -221,63 +257,55 @@
       </div>
       <input type="file" id="bgImgInput" accept="image/*" class="hidden">
     </div>
-    <div class="sec hidden" id="secCell">
-      <h3 data-i18n="cellTitle">选中格子</h3>
-      <label class="row"><span data-i18n="zoom">缩放</span> <input type="range" id="zoomSlider" min="20" max="300" value="100"><span class="val" id="zoomVal">1.0</span></label>
-      <input type="text" class="capt" id="captInput" data-i18n-ph="captPh" placeholder="格子标题（可留空）">
-      <p class="tip" data-i18n="cellTip">拖动格内照片调整位置，滚轮或滑块缩放，单击弹出裁剪菜单，双击清空</p>
-    </div>
-    <div class="sec hidden" id="secFree">
-      <h3 data-i18n="freeTitle">选中图片</h3>
-      <button class="btn ghost" id="cropFreeBtn" data-i18n="cropFreeBtn">✂ 裁剪这张图</button>
-      <div class="btnrow">
-        <button class="btn ghost" id="fwdBtn" data-i18n="fwd">上移层</button>
-        <button class="btn ghost" id="backBtn" data-i18n="back">下移层</button>
-        <button class="btn ghost" id="delBtn" style="color:#ff6b6b" data-i18n="del">删除</button>
+  </aside>
+  <section class="stage-shell">
+    <div class="stage">
+      <div id="canvasWrap">
+        <span id="sizeLabel"></span>
+        <canvas id="canvas"></canvas>
+        <canvas id="magnifier"></canvas>
+        <div class="rz" data-dir="r"></div>
+        <div class="rz" data-dir="b"></div>
+        <div class="rz" data-dir="rb"></div>
       </div>
-      <p class="tip" data-i18n="freeTip">拖动移动，右下角手柄缩放，顶部手柄旋转，单击弹出裁剪菜单</p>
     </div>
-    <div class="sec" id="secExport">
-      <h3 data-i18n="exportTitle">导出</h3>
-      <div class="export-card">
-        <div class="exp-grid">
-          <label class="exp-field"><span data-i18n="fmt">格式</span>
-            <select id="fmtSel"><option value="png">PNG</option><option value="jpg">JPG</option><option value="pdf">PDF</option></select>
-          </label>
-          <label class="exp-field" id="sizeField"><span data-i18n="size">尺寸</span>
-            <select id="sizeSel"><option value="1200" data-i18n="sizeStd">标准 1200px</option><option value="2400" selected data-i18n="sizeHd">高清 2400px</option><option value="4000" data-i18n="sizeUhd">超清 4000px</option></select>
-          </label>
-        </div>
-        <button class="btn primary" id="exportBtn" data-i18n="exportBtn">⬇ 导出拼图</button>
-        <button class="btn ghost" id="annExportBtn" data-i18n="annotExport">✏️ 打码/标注后导出</button>
-        <div class="btnrow">
-          <button class="btn ghost" id="saveLibBtn" data-i18n="saveLib">＋ 存入图片库</button>
-          <button class="btn ghost" id="toMockupBtn" data-i18n="toMockup">✨ 送去美化</button>
-        </div>
+    <div class="empty-card hidden" id="emptyCard">
+      <div class="empty-ico"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/></svg></div>
+      <h3 data-i18n="emptyTitle">把图片拖到这里开始</h3>
+      <p data-i18n="emptySub">也可以点下面的按钮选择，或直接 Ctrl+V 粘贴截图</p>
+      <div class="empty-actions">
+        <button class="btn-solid" id="emptyImport"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5"/><path d="M4 14.5v3A2.5 2.5 0 0 0 6.5 20h11a2.5 2.5 0 0 0 2.5-2.5v-3"/></svg><span data-i18n="emptyImport">选择图片</span></button>
+        <button class="btn-quiet" id="emptyVideo"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg><span data-i18n="emptyVideo">从视频截取</span></button>
       </div>
-      <button class="btn ghost danger" id="clearBtn" data-i18n="clearAll">清空全部</button>
     </div>
-  </div>
-  <div class="stage">
-    <div id="canvasWrap">
-      <canvas id="canvas"></canvas>
-      <canvas id="magnifier"></canvas>
-      <div class="rz" data-dir="r"></div>
-      <div class="rz" data-dir="b"></div>
-      <div class="rz" data-dir="rb"></div>
+    <div class="view-bar" id="viewBar">
+      <button id="zoomOut" aria-label="zoom out"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 12h12"/></svg></button>
+      <span id="zoomPct">100%</span>
+      <button id="zoomIn" aria-label="zoom in"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button>
+      <i class="vb-sep"></i>
+      <button id="zoomFit"><svg class="ico" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"/></svg><span data-i18n="zoomFit">适应</span></button>
     </div>
-  </div>
-  <div class="library">
-    <h3 data-i18n="libTitle">图片库（可拖入画布）</h3>
+  </section>
+  <aside class="library island" id="dock">
+    <div class="dock-head">
+      <h3 data-i18n="libTitle">图片库</h3>
+      <button class="icon-btn" id="dockToggle" aria-label="collapse"><svg class="ico" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+    </div>
+    <div class="sec dock-import" id="secImport">
+      <button class="dropzone" id="uploadBtn"><svg class="ico" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5"/><path d="M4 14.5v3A2.5 2.5 0 0 0 6.5 20h11a2.5 2.5 0 0 0 2.5-2.5v-3"/></svg><span data-i18n="import">导入图片</span><small data-i18n="dockHint">点击 / 拖拽 / Ctrl+V 粘贴</small></button>
+      <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
+      <button class="btn-quiet wide" id="vidOpenBtn"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg><span data-i18n="vidOpen">从视频截取</span></button>
+      <input type="file" id="vidInput" accept="video/*" class="hidden">
+    </div>
     <div class="libgrid" id="libGrid"></div>
-  </div>
+  </aside>
 </div>
-<div class="tray" id="tray"></div>
-<div id="dropOverlay"><span data-i18n="dropTip">📥 松开即可导入照片</span></div>
-<nav id="mNav">
-  <button data-mpanel="layout" class="active"><span>▦</span><em data-i18n="navLayout">布局</em></button>
-  <button data-mpanel="style"><span>🎨</span><em data-i18n="navStyle">样式</em></button>
-  <button data-mpanel="export"><span>⬇</span><em data-i18n="navExport">导出</em></button>
+<div class="tray island" id="tray"></div>
+<div id="dropOverlay"><span data-i18n="dropTip">松开即可导入照片</span></div>
+<nav id="mNav" class="island">
+  <button data-mpanel="layout" class="active"><svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M3.5 9.5h17M9.5 9.5v11"/></svg><em data-i18n="navLayout">布局</em></button>
+  <button data-mpanel="style"><svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M14.5 4.5 19.5 9.5 11 18H6v-5z"/><path d="M12.5 6.5l5 5"/></svg><em data-i18n="navStyle">样式</em></button>
+  <button data-mpanel="export"><svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M5 20h14"/></svg><em data-i18n="navExport">导出</em></button>
 </nav>
 <div id="pop"></div>
 <div id="cropModal">
@@ -396,6 +424,7 @@
 <script src="js/mockup.js"></script>
 <script src="js/pdf.js"></script>
 <script src="js/video.js"></script>
+<script src="js/ui.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

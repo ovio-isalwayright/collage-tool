@@ -13,8 +13,9 @@ function showPop(x, y, btns) {
   pop.style.display = 'flex';
   pop.style.left = '0px'; pop.style.top = '0px';
   const r = pop.getBoundingClientRect();
-  pop.style.left = Math.min(x, innerWidth - r.width - 10) + 'px';
-  pop.style.top = Math.min(y + 8, innerHeight - r.height - 10) + 'px';
+  pop.style.left = Math.max(10, Math.min(x - r.width / 2, innerWidth - r.width - 10)) + 'px';
+  pop.style.top = (y - r.height - 14 > 10 ? y - r.height - 14 : Math.min(y + 14, innerHeight - r.height - 10)) + 'px';
+  pop.classList.remove('pop-in'); void pop.offsetWidth; pop.classList.add('pop-in');
 }
 function hidePop() { pop.style.display = 'none'; }
 document.addEventListener('pointerdown', e => { if (!pop.contains(e.target)) hidePop(); }, true);

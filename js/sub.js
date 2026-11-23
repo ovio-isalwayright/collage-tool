@@ -55,9 +55,9 @@ function updateSubPanel() {
   const y0 = band.top * h, y1 = (band.top + band.h) * h;
   c.fillStyle = 'rgba(15,20,35,.55)';
   c.fillRect(0, 0, w, y0); c.fillRect(0, y1, w, h - y1);
-  c.strokeStyle = '#4f7cff'; c.lineWidth = 2;
+  c.strokeStyle = ACC; c.lineWidth = 2;
   c.strokeRect(1, y0, w - 2, Math.max(y1 - y0, 1));
-  c.fillStyle = '#4f7cff';
+  c.fillStyle = ACC;
   [y0, y1].forEach(y => { c.beginPath(); c.roundRect ? c.roundRect(w/2 - 16, y - 3, 32, 6, 3) : c.rect(w/2 - 16, y - 3, 32, 6); c.fill(); });
   const n = Math.max(0, stripOrder.length - (subFirstFull ? 1 : 0));
   info.textContent = (tid != null ? t('subEditing')(selStrip + 1) : t('subEditingAll')) + ' · ' + t('subInfo')(n, Math.round(band.h * ih));

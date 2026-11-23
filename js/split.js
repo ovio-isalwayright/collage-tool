@@ -150,7 +150,7 @@ function renderSplitScene(c, W, H) {
     for (let r = 0; r < splitYs.length - 1; r++) for (let q = 0; q < cols0; q++) {
       const x = splitXs[q]*W, y = splitYs[r]*H, w = (splitXs[q+1] - splitXs[q])*W, h = (splitYs[r+1] - splitYs[r])*H;
       if (splitSel.has(r * cols0 + q)) {
-        c.strokeStyle = '#4f7cff'; c.lineWidth = 4*k; c.strokeRect(x + 2*k, y + 2*k, w - 4*k, h - 4*k);
+        c.strokeStyle = ACC; c.lineWidth = 4*k; c.strokeRect(x + 2*k, y + 2*k, w - 4*k, h - 4*k);
       } else { c.fillStyle = 'rgba(15,18,28,.55)'; c.fillRect(x, y, w, h); }
     }
   }
@@ -169,11 +169,11 @@ function renderSplitScene(c, W, H) {
     const pw = (splitXs[q+1] - splitXs[q]) * W, ph = (splitYs[r+1] - splitYs[r]) * H;
     if (Math.min(pw, ph) < 30*k || rows * cols === 1) continue;
     const cx = splitXs[q]*W + 20*k, cy = splitYs[r]*H + 20*k;   // 编号放在每块左上角，不挡内容
-    c.fillStyle = splitSel.has(r * cols + q) ? '#4f7cff' : 'rgba(20,24,35,.62)'; c.beginPath(); c.arc(cx, cy, 13*k, 0, 7); c.fill();
+    c.fillStyle = splitSel.has(r * cols + q) ? ACC : 'rgba(20,24,35,.62)'; c.beginPath(); c.arc(cx, cy, 13*k, 0, 7); c.fill();
     c.fillStyle = '#fff'; c.fillText(String(r * cols + q + 1), cx, cy + k);
   }
   // 拖动手柄
-  c.fillStyle = '#4f7cff'; c.strokeStyle = '#fff'; c.lineWidth = 2*k;
+  c.fillStyle = ACC; c.strokeStyle = '#fff'; c.lineWidth = 2*k;
   // 手柄放在当前可视区域的中线上，长图滚到哪都能抓到
   const cb = canvas.getBoundingClientRect(), sb = stage.getBoundingClientRect();
   const hx = cb.width ? Math.min(W - 16*k, Math.max(16*k, (sb.left + sb.width/2 - cb.left) * k)) : W/2;
@@ -251,19 +251,19 @@ function drawRegion(c, W, H, k) {
   c.fillStyle = 'rgba(15,18,28,.55)';
   c.fillRect(0, 0, W, R.y); c.fillRect(0, R.y + R.h, W, H - R.y - R.h);
   c.fillRect(0, R.y, R.x, R.h); c.fillRect(R.x + R.w, R.y, W - R.x - R.w, R.h);
-  c.strokeStyle = '#4f7cff'; c.lineWidth = 2*k; c.strokeRect(R.x, R.y, R.w, R.h);
+  c.strokeStyle = ACC; c.lineWidth = 2*k; c.strokeRect(R.x, R.y, R.w, R.h);
   c.strokeStyle = 'rgba(255,255,255,.45)'; c.lineWidth = k;      // 三分线
   for (let i = 1; i <= 2; i++) {
     c.beginPath(); c.moveTo(R.x + R.w*i/3, R.y); c.lineTo(R.x + R.w*i/3, R.y + R.h); c.stroke();
     c.beginPath(); c.moveTo(R.x, R.y + R.h*i/3); c.lineTo(R.x + R.w, R.y + R.h*i/3); c.stroke();
   }
-  c.fillStyle = '#4f7cff'; c.strokeStyle = '#fff'; c.lineWidth = 2*k;
+  c.fillStyle = ACC; c.strokeStyle = '#fff'; c.lineWidth = 2*k;
   CORNERS.forEach(cn => { const [x, y] = regionCorner(R, cn); c.fillRect(x - 7*k, y - 7*k, 14*k, 14*k); c.strokeRect(x - 7*k, y - 7*k, 14*k, 14*k); });
   // 尺寸标签
   const e = regionEdges(), label = `${e.w} × ${e.h}`;
   c.font = `600 ${12*k}px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif`;
   const tw = c.measureText(label).width + 14*k, ly = R.y > 30*k ? R.y - 26*k : R.y + 8*k;
-  c.fillStyle = '#4f7cff'; c.fillRect(R.x, ly, tw, 20*k);
+  c.fillStyle = ACC; c.fillRect(R.x, ly, tw, 20*k);
   c.fillStyle = '#fff'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText(label, R.x + 7*k, ly + 10*k);
 }
 // 选框换算成原图像素
