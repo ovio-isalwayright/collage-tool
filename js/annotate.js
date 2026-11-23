@@ -126,12 +126,12 @@ function drawAnnot() {
   if (!op) return;
   annCtx.setTransform(an.s, 0, 0, an.s, 0, 0);
   if (op.t === 'mosaic') {           // 涂抹预览：半透明笔迹，松手才真正打码
-    annCtx.save(); annCtx.globalAlpha = 0.45; annCtx.strokeStyle = '#4f7cff';
+    annCtx.save(); annCtx.globalAlpha = 0.45; annCtx.strokeStyle = ACC;
     annCtx.lineWidth = op.w; annCtx.lineCap = annCtx.lineJoin = 'round';
     annCtx.beginPath(); op.pts.forEach((p, i) => i ? annCtx.lineTo(p.x, p.y) : annCtx.moveTo(p.x, p.y)); annCtx.stroke();
     annCtx.restore();
   } else if (op.t === 'mbox') {
-    annCtx.save(); annCtx.fillStyle = 'rgba(79,124,255,.25)'; annCtx.strokeStyle = '#4f7cff'; annCtx.lineWidth = 2 / an.s;
+    annCtx.save(); annCtx.fillStyle = accA(.25); annCtx.strokeStyle = ACC; annCtx.lineWidth = 2 / an.s;
     annCtx.setLineDash([6 / an.s, 4 / an.s]);
     const x = Math.min(op.x0, op.x1), y = Math.min(op.y0, op.y1), w = Math.abs(op.x1 - op.x0), h = Math.abs(op.y1 - op.y0);
     annCtx.fillRect(x, y, w, h); annCtx.strokeRect(x, y, w, h); annCtx.restore();

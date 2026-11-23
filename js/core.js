@@ -292,7 +292,7 @@ function renderScene(c, W, H, showUI) {
       if (showUI && i === selCell && i !== swapTarget) {
         c.save();
         shapePath(c, sh);
-        c.strokeStyle = '#4f8cff'; c.lineWidth = 5; c.stroke();
+        c.strokeStyle = ACC; c.lineWidth = 5; c.stroke();
         c.restore();
       }
       if (showUI && i === swapTarget) {
@@ -323,9 +323,9 @@ function renderScene(c, W, H, showUI) {
         const w = it.w * it.scale, h = it.h * it.scale;
         c.save();
         c.translate(it.x, it.y); c.rotate(it.rot);
-        c.strokeStyle = '#4f8cff'; c.lineWidth = 3;
+        c.strokeStyle = ACC; c.lineWidth = 3;
         c.strokeRect(-w/2, -h/2, w, h);
-        c.fillStyle = '#4f8cff';
+        c.fillStyle = ACC;
         c.beginPath(); c.arc(w/2, h/2, 14, 0, 7); c.fill();       // 右下角
         c.beginPath(); c.moveTo(0, -h/2); c.lineTo(0, -h/2-40); c.stroke();
         c.beginPath(); c.arc(0, -h/2-40, 14, 0, 7); c.fill();     // 旋转
@@ -339,7 +339,7 @@ function renderScene(c, W, H, showUI) {
     if (showUI && pages > 1) {
       const pw = W / pages;
       c.save();
-      c.setLineDash([10,8]); c.strokeStyle = 'rgba(79,140,255,.5)'; c.lineWidth = 2;
+      c.setLineDash([10,8]); c.strokeStyle = accA(.5); c.lineWidth = 2;
       for (let k = 1; k < pages; k++) {
         c.beginPath(); c.moveTo(k*pw, 0); c.lineTo(k*pw, H); c.stroke();
       }
@@ -354,7 +354,7 @@ function renderScene(c, W, H, showUI) {
       if (showUI && i === selStrip) {
         c.save();
         roundRectPath(c, r.x, r.y, r.w, r.h, rad);
-        c.strokeStyle = '#4f8cff'; c.lineWidth = 6; c.stroke();
+        c.strokeStyle = ACC; c.lineWidth = 6; c.stroke();
         c.restore();
       }
     });
@@ -363,8 +363,9 @@ function renderScene(c, W, H, showUI) {
   }
 }
 function fitCanvas() {
-  const availW = Math.max(stage.clientWidth - 48, 100);
-  const availH = Math.max(stage.clientHeight - 48, 100);
+  const cs = getComputedStyle(stage);   // 留出舞台内边距（顶部尺寸标签、底部缩放条）
+  const availW = Math.max(stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), 100);
+  const availH = Math.max(stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom), 100);
   let s = Math.min(availW / canvas.width, availH / canvas.height, 1);
   stage.classList.toggle('scroll', mode === 'split' || mode === 'sub' || mode === 'stitch');
   if (mode === 'split' && splitSrc != null) {
@@ -378,6 +379,8 @@ function fitCanvas() {
     const sW = Math.min(availW / canvas.width, 1);
     s = Math.max(s, Math.min(sW, 460 / canvas.width));
   }
+  s *= viewZoom;
+  if (viewZoom > 1) stage.classList.add('scroll');
   canvas.style.width = Math.round(canvas.width * s) + 'px';
   canvas.style.height = Math.round(canvas.height * s) + 'px';
 }
@@ -393,6 +396,7 @@ function render() {
   document.getElementById('sizeLabel').textContent = src ? t('srcSizeLabel')(src.cr.sw, src.cr.sh) : t('sizeLabel')(Math.round(W), Math.round(H));
   if (mode === 'sub') updateSubPanel();
   if (mode === 'stitch') updateStitchPanel();
+  afterRender();
 }
 window.addEventListener('resize', render);
 
@@ -534,10 +538,10 @@ function setMode(m) {
   applyMobilePanel();
 }
 document.querySelectorAll('.tabs [data-mode]').forEach(b => { b.onclick = () => setMode(b.dataset.mode); });
-document.querySelectorAll('[data-dir]').forEach(b => {
+document.querySelectorAll('#secStrip [data-dir]').forEach(b => {
   b.onclick = () => {
     stripDir = b.dataset.dir;
-    document.querySelectorAll('[data-dir]').forEach(e => e.classList.toggle('active', e === b));
+    document.querySelectorAll('#secStrip [data-dir]').forEach(e => e.classList.toggle('active', e === b));
     selStrip = -1;
     render();
   };
@@ -575,6 +579,7 @@ function updateSidebar() {
   const freeItem = mode === 'free' && selFree >= 0 && freeItems[selFree];
   document.getElementById('secFree').classList.toggle('hidden', !(freeItem && freeItems[selFree].type !== 'group'));
   document.getElementById('modeHint').textContent = t(hintKey[mode]);
+  document.getElementById('inspMode').textContent = t({ template:'modeTemplate', free:'modeFree', strip:'modeStrip', split:'modeSplit', sub:'modeSub', stitch:'modeStitch', mockup:'modeMockup' }[mode]);
   document.getElementById('pageInfo').textContent = t('pageInfo')(pages);
   wrap.classList.toggle('noresize', isStrip() || mode === 'split' || mode === 'mockup');
   if (cellSel) {

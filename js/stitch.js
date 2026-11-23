@@ -129,7 +129,7 @@ function drawSeams(c, rects) {
     const s = stitchSeam[rects[i].id];
     c.save();
     c.setLineDash([10 * k, 7 * k]);
-    c.strokeStyle = on ? '#2ea36b' : (s && s.ok ? 'rgba(79,124,255,.85)' : 'rgba(229,72,77,.85)');
+    c.strokeStyle = on ? '#2ea36b' : (s && s.ok ? accA(.85) : 'rgba(229,72,77,.85)');
     c.lineWidth = (on ? 2.5 : 1.5) * k;
     c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke();
     c.setLineDash([]);

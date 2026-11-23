@@ -52,3 +52,26 @@ Object.assign(I18N.en, {
   pasteDone:n=>`Pasted ${n} image${n>1?'s':''}`,
   vidTip:'The blue box is the subtitle area — drag to adjust. Manual: scrub or use ←→ to step frames, then Capture Frame (or press S). Auto: scans from the start point to the end point and captures only when the subtitle changes; the first frame is kept whole',
 });
+
+// ---------- 界面外壳文案 ----------
+Object.assign(I18N.zh, {
+  exportMenu:'导出', emptyTitle:'把图片拖到这里开始', emptySub:'也可以点下面的按钮选择，或直接 Ctrl+V 粘贴截图',
+  emptyImport:'选择图片', emptyVideo:'从视频截取', zoomFit:'适应', dockHint:'点击 / 拖拽 / Ctrl+V 粘贴',
+  libTitle:'图片库', import:'导入图片', vidOpen:'从视频截取', libEmpty:'导入的图片会出现在这里，可以拖进画布',
+  sizeLabel:(w,h)=>`${w} × ${h}`, srcSizeLabel:(w,h)=>`原图 ${w} × ${h}`,
+});
+Object.assign(I18N.en, {
+  exportMenu:'Export', emptyTitle:'Drop images here to start', emptySub:'Or choose files below — Ctrl+V pastes a screenshot',
+  emptyImport:'Choose images', emptyVideo:'Capture from video', zoomFit:'Fit', dockHint:'Click / drop / Ctrl+V',
+  libTitle:'Library', import:'Import images', vidOpen:'Capture from video', libEmpty:'Imported images show up here — drag them onto the canvas',
+  sizeLabel:(w,h)=>`${w} × ${h}`, srcSizeLabel:(w,h)=>`Original ${w} × ${h}`,
+});
+// 新界面用线性图标，去掉按钮文案开头的 emoji / 符号（方向箭头 ↓ → 保留，它们本身有含义）
+(function () {
+  const RX = /^(?:[\u{1F300}-\u{1FAFF}☀-➿⬀-⯿＋－⊞■▶↶←✂✔️‍]\s*)+/u;
+  const strip = v => typeof v === 'string' ? v.replace(RX, '') : v;
+  [I18N.zh, I18N.en].forEach(L => Object.keys(L).forEach(k => {
+    const v = L[k];
+    L[k] = typeof v === 'function' ? (...a) => strip(v(...a)) : strip(v);
+  }));
+})();
