@@ -57,7 +57,8 @@ function draw(){
   const k=$('platform').value,wc=k==='wechat',dy=k==='douyin',red=k==='red',ig=k==='ins',group=wc&&$('group').value;
   $('handleLabel').hidden=!ig;$('wall').hidden=!customWall(k);$('groupLabel').hidden=!wc;
   const line=20,header=wc?87:dy?94:105, footer=wc?80:dy||red?122:78;
-  let y=header+4;
+  const full=$('layout').value==='full';
+  let y=full?header+4:12;
   const blocks=messages.map(m=>{
     const top=y, lines=wrap(m.value), voice=m.kind==='voice',media=m.kind==='media';
     const body=lines.length*line+16;
@@ -68,23 +69,25 @@ function draw(){
     y+=m.kind==='date'?32:h+trans+(group&&m.side==='peer'?15:0)+(media&&ig?21:0)+15;
     return {m,top,lines,width,h,duration,trans,body};
   });
-  const height=Math.max(847,y+footer);
+  const height=full?Math.max(847,y+footer):Math.max(24,y);
   exportable=height<=8000;$('save').disabled=!exportable;
   $('notice').textContent=exportable?'':'对话过长，请缩短内容后导出。';
   canvas.width=1320;canvas.height=Math.round(Math.min(height,8000)*1320/390);
   ctx.setTransform(1320/390,0,0,1320/390,0,0);
   box(0,0,390,height,0,wc?'#ededed':dy?'#cad9eb':'white');
   if(walls[k])cover(walls[k],0,0,390,height);
-  if(wc||dy)box(0,0,390,header,0,wc?'rgba(244,244,244,.94)':'rgba(212,226,242,.45)');
-  text('14:18',46,35,'#080808',16,true);
-  for(let i=0;i<4;i++)box(277+5*i,32-i*2,3,3+i*2,1,'black');
-  text('◒',301,35,'black',16);box(326,23,26,12,4,'#aaa');box(326,23,13,12,3,'black');box(353,26,2,5,1,'#aaa');
-  text('‹',wc?14:17,header-12,'#181818',31);
-  if(wc)center(group||people.peer.name,header-13,'#191919',16);
-  else {avatar('peer',ig?66:40,header-42,31,16);text(people.peer.name,ig?104:81,header-(ig?26:18),'#24242a',15,true,ig?116:180);
-    if(ig)text($('handle').value,104,header-11,'#26282a',11,false,110)}
-  if(red||ig)asset(k+'-controls',ig?235:351,57,ig?155:39,47);
-  else text(dy?'♧    •••':'•••',dy?320:355,header-15,'#202027',15);
+  if(full){
+    if(wc||dy)box(0,0,390,header,0,wc?'rgba(244,244,244,.94)':'rgba(212,226,242,.45)');
+    text('14:18',46,35,'#080808',16,true);
+    for(let i=0;i<4;i++)box(277+5*i,32-i*2,3,3+i*2,1,'black');
+    text('◒',301,35,'black',16);box(326,23,26,12,4,'#aaa');box(326,23,13,12,3,'black');box(353,26,2,5,1,'#aaa');
+    text('‹',wc?14:17,header-12,'#181818',31);
+    if(wc)center(group||people.peer.name,header-13,'#191919',16);
+    else {avatar('peer',ig?66:40,header-42,31,16);text(people.peer.name,ig?104:81,header-(ig?26:18),'#24242a',15,true,ig?116:180);
+      if(ig)text($('handle').value,104,header-11,'#26282a',11,false,110)}
+    if(red||ig)asset(k+'-controls',ig?235:351,57,ig?155:39,47);
+    else text(dy?'♧    •••':'•••',dy?320:355,header-15,'#202027',15);
+  }
   for(const {m,top,lines,width,h,duration,trans,body} of blocks){
     if(m.kind==='date'){font(12);const w=ctx.measureText(m.value).width+12;if(wc||dy)box((390-w)/2,top,w,19,4,wc?'#ffffffe0':'#20263288');center(m.value,top+14,dy?'white':'#85868a',12);continue}
     const own=m.side==='me',x=own?(ig?383:wc?332:dy?340:337)-width:(wc?58:ig||dy?50:53);
@@ -112,6 +115,7 @@ function draw(){
         lines.forEach((l,i)=>text(l,tx+10,yy+h+26+i*line,dy?ink:'#202023',15,false,tw-20))}
     }else lines.forEach((l,i)=>text(l,x+11,yy+24+i*line,ink,15));
   }
+  if(!full)return;
   if(wc||red||ig){asset(k+'-input',0,height-(wc?80:78),390,wc?80:78);if(red)asset('red-reactions',0,height-120,390,36)}
   else if(dy){['👋 打招呼','🔥 续火花','👍 赞','😂 捂脸','🌹 玫瑰'].forEach((s,i)=>{box(6+i*78,height-114,74,27,7,'#eeeeeedb');text(s,12+i*78,height-96,'#21232b',12)});
     box(7,height-78,376,40,9,'#eeeeeee6');text('▦   发消息或按住说话…',16,height-52,'#565860',15);text('◉   ☺   ⊕',282,height-52,'#20232a',18)}
@@ -149,6 +153,7 @@ function add(side,value,kind="text"){
   messages.push(m);$('messages').append(el);draw();return area;
 }
 $('platform').onchange=draw;
+$('layout').onchange=draw;
 $('handle').oninput=draw;
 $('voice').onclick=()=>add('peer','','voice').focus();
 $('media').onclick=()=>add('peer','','media').focus();

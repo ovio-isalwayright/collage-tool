@@ -2,6 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>聊天框制作 · Collage</title><link rel="stylesheet" href="css/chat.css"></head>
 <body><header><a href="index.html">‹ 拼图工具</a><h1>聊天框制作</h1><button id="save">导出 PNG ↓</button></header>
 <main><section class="editor"><label>平台样式<select id="platform"><option value="wechat">微信</option><option value="douyin">抖音</option><option value="red">小红书</option><option value="ins">Instagram</option><option value="threads">Threads</option></select></label>
+<label>画面范围<select id="layout"><option value="full">完整聊天界面（含顶栏和图标）</option><option value="messages">纯聊天框</option></select></label>
 <fieldset id="wall"><legend>聊天背景</legend><label>选择或更换图片<input id="wallFile" type="file" accept="image/*"></label><button id="resetWall">恢复默认</button></fieldset>
 <label id="handleLabel" hidden>Instagram 用户名<input id="handle" maxlength="32"></label><label id="groupLabel">微信群名（单聊留空）<input id="group" maxlength="40"></label>
 <h2>聊天双方</h2><div id="people"></div><h2>对话内容</h2><div id="messages"></div><button id="voice">＋ 语音</button> <button id="media">＋ 图片卡片</button> <button id="date">＋ 时间</button> <button id="add">＋ 添加消息</button><p id="notice" role="status"></p></section>
