@@ -3,9 +3,10 @@
 <body><header><a href="index.html">‹ 拼图工具</a><h1>聊天框制作</h1><button id="save">导出 PNG ↓</button></header>
 <main><section class="editor"><label>平台样式<select id="platform"><option value="wechat">微信</option><option value="douyin">抖音</option><option value="red">小红书</option><option value="ins">Instagram</option><option value="threads">Threads</option></select></label>
 <label>画面范围<select id="layout"><option value="full">完整聊天界面（含顶栏和图标）</option><option value="messages">纯聊天框</option></select></label>
+<label id="clockLabel">顶部状态栏时间<input id="clock" type="time" value="14:18" required></label>
 <fieldset id="wall"><legend>聊天背景</legend><label>选择或更换图片<input id="wallFile" type="file" accept="image/*"></label><button id="resetWall">恢复默认</button></fieldset>
 <label id="handleLabel" hidden>Instagram 用户名<input id="handle" maxlength="32"></label><label id="groupLabel">微信群名（单聊留空）<input id="group" maxlength="40"></label>
-<h2>聊天双方</h2><div id="people"></div><h2>对话内容</h2><div id="messages"></div><button id="voice">＋ 语音</button> <button id="media">＋ 图片卡片</button> <button id="date">＋ 时间</button> <button id="add">＋ 添加消息</button><p id="notice" role="status"></p></section>
+<h2>聊天双方</h2><div id="people"></div><h2>对话内容</h2><div id="messages"></div><button id="voice">＋ 语音</button> <button id="media">＋ 图片卡片</button> <button id="date">＋ 聊天时间标签</button> <button id="add">＋ 添加消息</button><p id="notice" role="status"></p></section>
 <section class="stage" aria-label="实时预览"><canvas id="preview" aria-label="聊天记录图片预览"></canvas></section></main>
 <template id="person"><fieldset><legend></legend><label>昵称<input type="text" maxlength="32"></label><label>头像<input type="file" accept="image/*"></label></fieldset></template>
 <template id="message"><div class="row"><select aria-label="发送方"><option value="peer">对方</option><option value="me">我</option></select><textarea rows="2" maxlength="600" aria-label="消息文字"></textarea><button aria-label="删除这条消息">删除</button></div></template><script src="js/chat-controls.js"></script><script src="js/chat.js"></script></body></html>

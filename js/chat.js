@@ -58,6 +58,7 @@ function draw(){
   $('handleLabel').hidden=!ig;$('wall').hidden=!customWall(k);$('groupLabel').hidden=!wc;
   const line=20,header=wc?87:dy?94:105, footer=wc?80:dy||red?122:78;
   const full=$('layout').value==='full';
+  $('clockLabel').hidden=!full;
   let y=full?header+4:12;
   const blocks=messages.map(m=>{
     const top=y, lines=wrap(m.value), voice=m.kind==='voice',media=m.kind==='media';
@@ -78,7 +79,7 @@ function draw(){
   if(walls[k])cover(walls[k],0,0,390,height);
   if(full){
     if(wc||dy)box(0,0,390,header,0,wc?'rgba(244,244,244,.94)':'rgba(212,226,242,.45)');
-    text('14:18',46,35,'#080808',16,true);
+    text($('clock').value||'14:18',46,35,'#080808',16,true);
     asset('status-signal',277,22,58/3,37/3);
     asset('status-wifi',302.5,22,52/3,37/3);
     asset('status-battery',326.5,22,82/3,39/3);
@@ -150,19 +151,26 @@ function add(side,value,kind="text"){
     else{label.textContent='卡片图片';input.type='file';input.accept='image/*';input.onchange=async()=>{const f=input.files[0];if(!f)return;try{const im=await loadImage(f);if(input.files[0]===f){m.image=im;draw()}}catch{$('notice').textContent='无法读取图片。'}};area.placeholder='图片说明'}
     label.append(input);el.append(label)
   }
-  if(kind==='date'){select.hidden=true;area.placeholder='时间标签'}
+  if(kind==='date'){
+    select.hidden=true;
+    const label=document.createElement('label');label.textContent='聊天时间标签';label.style.gridColumn='1 / 3';
+    area.before(label);label.append(area);area.rows=1;area.maxLength=32;
+    area.setAttribute('aria-label','聊天时间标签');area.placeholder='例如：昨天 14:18';
+  }
   messages.push(m);$('messages').append(el);draw();return area;
 }
+$('clock').oninput=draw;
 $('platform').onchange=draw;
 $('layout').onchange=draw;
 $('handle').oninput=draw;
 $('voice').onclick=()=>add('peer','','voice').focus();
 $('media').onclick=()=>add('peer','','media').focus();
-$('date').onclick=()=>add('peer','14:18','date').focus();
+$('date').onclick=()=>add('peer',$('clock').value||'14:18','date').focus();
 for(const [key,src] of Object.entries(chatControls)){const image=new Image();image.onload=()=>{controls[key]=image;draw()};image.src=src}
 $('add').onclick=()=>add(messages.at(-1)?.side==='peer'?'me':'peer','').focus();
 $('save').onclick=()=>{if(exportable)canvas.toBlob(blob=>{
   if(!blob){$('notice').textContent='导出失败，请缩短内容后重试。';return}
   const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=$('platform').value+'-chat.png';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),60000);
 },'image/png')};
+add('peer',$('clock').value,'date');
 add('peer','今天开到了哪张卡？');add('me','是我一直在找的那张！');
